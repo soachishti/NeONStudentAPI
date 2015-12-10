@@ -28,6 +28,10 @@ var NeonURL = 'http://nu.edu.pk/NeONStudent/';
 // Remember Cookies
 //var request = request.defaults({ jar: true }) // Saving it in session
 
+app.get('/', function (req, res) {
+    res.send("Start from GET /load");
+}
+
 app.get('/load', function (req, res) {
 	// Create Cookie jar	
 	req.session.cookies = request.jar()
