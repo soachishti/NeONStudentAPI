@@ -18,7 +18,9 @@ app.use(session({
 	name: 'TaizBiskut',
 	secret: 'oRsZmO1LwIyx563DC1V3', 
 	resave: true,
-	saveUninitialized: true
+	saveUninitialized: true,
+    cookie: false,
+    headerName: 'TaizBiskut'
 }))
 
 app.use(cors());		// For allowing Ajax to access out API
@@ -29,7 +31,7 @@ var NeonURL = 'http://nu.edu.pk/NeONStudent/';
 //var request = request.defaults({ jar: true }) // Saving it in session
 
 app.get('/', function(req, res){
-    res.send('hello world');
+    res.send({message:'hello world'});
 });
 
 app.get('/load', function (req, res) {
@@ -58,10 +60,10 @@ app.get('/load', function (req, res) {
 			request({ url: captchaImgURI, encoding: null }, function (error, response, data) {
 				if (!error && response.statusCode == 200) {
 					var captchaImgData = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
-					res.send(captchaImgData);
+					res.send({captcha:captchaImgData, token:req.sessionID});
 				} 
 				else {
-					res.send("Error getting image.");
+					res.send({message:"Error getting image."});
 				}
 			});
 		}
@@ -72,7 +74,7 @@ app.get('/load', function (req, res) {
 app.post('/login', function (req, res) {
 	console.log("Login POST");
 	if (!req.session.LoginData && !req.session.cookies) { 
-		res.send("First request /load to continue.");
+		res.send({message:"First request /load to continue."});
 		return;
 	}
 	console.log("Login POST: Condition successfull");
@@ -91,21 +93,21 @@ app.post('/login', function (req, res) {
 		if (!error && response.statusCode == 302) {
 			res.statusCode = 202;
 			req.session.LoggedIn = true;
-			res.send("Login successfull!");
+			res.send({message:"Login successfull!"});
 		}
 		else {
 			res.statusCode = 401; 
 			if (body.indexOf("Invalid Code") != -1) {
-				res.send("Invalid captcha value!");
+				res.send({message:"Invalid captcha value!"});
 			}
 			else if (body.indexOf("Login Failed.Try Again") != -1) {
-				res.send("Invalid username or password!");
+				res.send({message:"Invalid username or password!"});
 			}
 			else if (body.indexOf("connection") != -1) {
-				res.send("Server switch off!");
+				res.send({message:"Server switch off!"});
 			}
 			else {
-				res.send("Failed to login without any reason!s");
+				res.send({message:"Failed to login without any reason!s"});
 			}
 		}
 	})
@@ -114,7 +116,7 @@ app.post('/login', function (req, res) {
 //Done
 app.get('/student', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) { 
-		res.send('login first');
+		res.send({message:'login first'});
 		return;
 	}
 	
@@ -133,10 +135,10 @@ app.get('/student', function (req, res) {
 			student.campus = $('#MainContent_fvPersonal_lblCampus').text();
 			student.email = $('#MainContent_fvPersonal_lblEmail').text();
 			
-			res.send(JSON.stringify(student, null, 2));
+			res.send({result:JSON.stringify(student, null, 2)});
 		}
 		else {
-			res.send("Fail to get data.");
+			res.send({message:"Fail to get data."});
 		}
 	})
 })
@@ -144,20 +146,20 @@ app.get('/student', function (req, res) {
 // Done
 app.get('/logout', function (req, res) {
 	req.session.destroy();
-	res.send("Have a good day!");
+	res.send({message:"Have a good day!"});
 })
 
 //Done
 app.get('/attendence', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) { 
-		res.send('login first');
+		res.send({message:'login first'});
 		return;
 	}
 	
 	// Get Saved Cookies
 	request = request.defaults({ jar: req.session.cookies })
 
-	request('http://localhost/NeonSample/Attendence.html', function (error, response, html) {
+	request(NeonURL + '/Registration/ViewStudentAttendance.aspx', function (error, response, html) {
 		if (!error) {
 			var $ = cheerio.load(html);
 			var json = [];			
@@ -187,10 +189,10 @@ app.get('/attendence', function (req, res) {
 				json[data].absentHour = absentHour;
 			}
 			
-			res.send(JSON.stringify(json, null, 2));
+			res.send({result:JSON.stringify(json, null, 2)});
 		}
 		else {
-			res.send("Fail to get data.");
+			res.send({message:"Fail to get data."});
 		}
 	})
 
@@ -198,14 +200,15 @@ app.get('/attendence', function (req, res) {
 
 app.get('/marks', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) {
-		res.send('login first');
+		res.send({message:'login first'});
 		return;
 	}
 	
 	// Get Saved Cookies
 	request = request.defaults({ jar: req.session.cookies })
 
-	request('http://localhost/NeonSample/Marks.html', function (error, response, html) {
+	//request('http://localhost/NeonSample/Marks.html', function (error, response, html) {
+	request(NeonURL + '/Registration/StudentMArksEvaluations.aspx', function (error, response, html) {
 		if (!error) {
 			var $ = cheerio.load(html);
 			var json = [];
@@ -225,10 +228,10 @@ app.get('/marks', function (req, res) {
 				json.push(tableInfo);
 			});
 						
-			res.send(JSON.stringify(json, null, 2));
+			res.send({result:JSON.stringify(json, null, 2)});
 		}
 		else {
-			res.send("Fail to get data.");
+			res.send({message:"Fail to get data."});
 		}
 	})
 
@@ -237,15 +240,15 @@ app.get('/marks', function (req, res) {
 //Done
 app.get('/courses', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) {
-		res.send('login first');
+		res.send({message:'login first'});
 		return;
 	}
 	
 	// Get Saved Cookies
 	request = request.defaults({ jar: req.session.cookies })
 	
-	//request(NeonURL + '/Registration/StudentREgistration.aspx', function (error, response, html) {
-	request('http://localhost/NeonSample/RegisteredCourse.html', function (error, response, html) {
+	request(NeonURL + '/Registration/StudentREgistration.aspx', function (error, response, html) {
+	//request('http://localhost/NeonSample/RegisteredCourse.html', function (error, response, html) {
 		if (!error) {
 			var $ = cheerio.load(html);
 			var json = {};
@@ -273,10 +276,10 @@ app.get('/courses', function (req, res) {
 			});
 			
 			json.courses = courses;
-			res.send(JSON.stringify(json, null, 2));
+			res.send({result:JSON.stringify(json, null, 2)});
 		}
 		else {
-			res.send("No course registered.");
+			res.send({message:"No course registered."});
 		}
 	})
 	console.log("Leaving");
@@ -285,15 +288,15 @@ app.get('/courses', function (req, res) {
 // Done
 app.get('/challan', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) {
-		res.send('login first');
+		res.send({message:'login first'});
 		return;
 	}
 	
 	// Get Saved Cookies
 	request = request.defaults({ jar: req.session.cookies })
 
-	//request(NeonURL + '/FMS/GenerateChallan.aspx', function (error, response, html) {
-	request('http://localhost/NeonSample/Challan.html', function (error, response, html) {
+	request(NeonURL + '/FMS/GenerateChallan.aspx', function (error, response, html) {
+	//request('http://localhost/NeonSample/Challan.html', function (error, response, html) {
 		console.log("In courses request");
 		if (!error) {
 			var $ = cheerio.load(html);
@@ -313,10 +316,10 @@ app.get('/challan', function (req, res) {
 			})
 			json = challans;
 			
-			res.send(JSON.stringify(json, null, 2));
+			res.send({result:JSON.stringify(json, null, 2)});
 		}
 		else {
-			res.send("No chalan to show.");
+			res.send({message:"No chalan to show."});
 		}
 	})
 })
