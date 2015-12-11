@@ -23,7 +23,13 @@ app.use(session({
     headerName: 'TaizBiskut'
 }))
 
-app.use(cors({credentials: true}));		// For allowing Ajax to access out API
+var corsOptions = {
+  origin: true,
+  methods: ['POST'],
+  credentials: true,
+  maxAge: 3600
+};
+app.use(cors(corsOptions));		// For allowing Ajax to access out API
 
 var NeonURL = 'http://nu.edu.pk/NeONStudent/';
 
