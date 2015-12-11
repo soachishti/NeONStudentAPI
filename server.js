@@ -102,7 +102,7 @@ app.post('/login', function (req, res) {
 			res.send({message:"Login successfull!"});
 		}
 		else {
-			res.statusCode = 401; 
+			res.statusCode = 200; 
 			if (body.indexOf("Invalid Code") != -1) {
 				res.send({message:"Invalid captcha value!"});
 			}
