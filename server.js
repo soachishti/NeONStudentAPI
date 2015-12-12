@@ -291,6 +291,66 @@ app.get('/courses', function (req, res) {
 	console.log("Leaving");
 })
 
+app.get('/transcript', function (req, res) {
+	if (!req.session.LoginData && !req.session.cookies) { 
+		res.send({message:'login first'});
+		return;
+	}
+
+	// Get Saved Cookies
+	request = request.defaults({ jar: req.session.cookies })
+
+	request(NeonURL + '/Registration/StudentTranscript.aspx', function (error, response, html) {
+	//request('http://localhost/NeonSample/transcript.html', function (error, response, html) {
+		if (!error) {
+			jsonResponse = [];
+            var $ = cheerio.load(html);
+           
+            //https://github.com/iaincollins/tabletojson
+            $("table[class='grid-view']").each(function(i, table) {
+                var tableAsJson = [];
+                var columnHeadings = [];
+                $(table).find('tr').each(function(i, row) {
+                    $(row).find('th').each(function(j, cell) {
+                        columnHeadings[j] = $(cell).text().trim();
+                    });
+                });
+
+                // Fetch each row
+                $(table).find('tr').each(function(i, row) {
+                    var rowAsJson = {};
+                    $(row).find('td').each(function(j, cell) {
+                        if (columnHeadings[j]) {
+                            rowAsJson[ columnHeadings[j] ] = $(cell).text().trim();
+                        } else {
+                            rowAsJson[j] = $(cell).text().trim();
+                        }
+                    });
+                    
+                    // Skip blank rows
+                    if (JSON.stringify(rowAsJson) != '{}')
+                        tableAsJson.push(rowAsJson);
+                });
+                
+                console.log();
+                console.log();
+                console.log();
+                // Add the table to the response
+                if (tableAsJson.length != 0)
+                    jsonResponse.push({semester:i+1, grade:tableAsJson});
+            });
+           
+            
+            
+            
+			res.send(jsonResponse);
+		}
+		else {
+			res.send({message:"Fail to get data."});
+		}
+	})
+})
+
 // Done
 app.get('/challan', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) {
