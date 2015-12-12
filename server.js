@@ -270,7 +270,7 @@ app.get('/courses', function (req, res) {
 			var calls = [];
 			
 			$('#MainContent_GVRegisterCourses th').each(function (index, item) {
-				headers[index] = $(item).html();
+				headers[index] = $(item).text();
 			})
 			
 			$('#MainContent_GVRegisterCourses tr').has('td').each(function () {
