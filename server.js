@@ -331,13 +331,10 @@ app.get('/transcript', function (req, res) {
                     if (JSON.stringify(rowAsJson) != '{}')
                         tableAsJson.push(rowAsJson);
                 });
-                
-                console.log();
-                console.log();
-                console.log();
+
                 // Add the table to the response
                 if (tableAsJson.length != 0)
-                    jsonResponse.push({semester:i+1, grade:tableAsJson});
+                    jsonResponse.push({result:{semester:i+1, grade:tableAsJson}});
             });
            
             
