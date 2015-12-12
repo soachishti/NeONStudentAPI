@@ -334,13 +334,9 @@ app.get('/transcript', function (req, res) {
 
                 // Add the table to the response
                 if (tableAsJson.length != 0)
-                    jsonResponse.push({result:{semester:i+1, grade:tableAsJson}});
+                    jsonResponse.push({semester:i+1, grade:tableAsJson});
             });
-           
-            
-            
-            
-			res.send(jsonResponse);
+  			res.send({result:jsonResponse});
 		}
 		else {
 			res.send({message:"Fail to get data."});
