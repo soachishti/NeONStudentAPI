@@ -310,7 +310,7 @@ app.get('/challan', function (req, res) {
 			var challans = [];
 			var headers = [];
 			$('#MainContent_gvChallan th').each(function (index, item) {
-				headers[index] = $(item).html();
+				headers[index] = $(item).text();
 			});
 			$('#MainContent_gvChallan tr').has('td').each(function () {
 				var ChalanInfo = {};
