@@ -4,7 +4,15 @@ var cors			= require('cors')
 var request			= require('request');
 var cheerio			= require('cheerio');
 var bodyParser		= require('body-parser');
-var port			= process.env.PORT || 7881;
+var port;
+
+if (process.env.OPENSHIFT_NODEJS_PORT) {
+    // OpenShift
+    port = process.env.OPENSHIFT_NODEJS_PORT || 7881;
+else {
+    // Azure
+    port = process.env.PORT || 7881;
+}
 
 var app = express();
 app.use(bodyParser.json())
