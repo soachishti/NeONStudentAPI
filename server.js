@@ -4,6 +4,7 @@ var cors			= require('cors')
 var request			= require('request');
 var cheerio			= require('cheerio');
 var bodyParser		= require('body-parser');
+var uuid            = require('node-uuid');
 
 // Set ip Address
 var ip_address = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
@@ -19,12 +20,13 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(session({
+    genid: function(req) { return uuid.v1(); },
 	name: 'TaizBiskut',
 	secret: 'oRsZmO1LwIyx563DC1V3', 
 	resave: true,
 	saveUninitialized: true,
-    cookie: false,
-    headerName: 'TaizBiskut'
+    cookie: false
+    //headerName: 'TaizBiskut'      // Not supported yet!
 }))
 
 var corsOptions = {
@@ -138,7 +140,9 @@ app.get('/student', function (req, res) {
 		if (!error) {
 			var $ = cheerio.load(html);
 			var student = {};
-			student.name = $('#MainContent_fvPersonal_lblName').text();
+			student.fullname = $('#MainContent_fvPersonal_lblName').text();
+			student.name = student.fullname.split('\s+')[0];
+			student.img = $('#MainContent_fvPersonal_imgStudent').attr('src');
 			student.rollno = $('#MainContent_fvPersonal_lblRollno').text();
 			student.degree = $('#MainContent_fvPersonal_lblDegree').text();
 			student.batch = $('#MainContent_fvPersonal_lblBatch').text();
