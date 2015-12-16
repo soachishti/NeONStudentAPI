@@ -141,7 +141,7 @@ app.get('/student', function (req, res) {
 			var $ = cheerio.load(html);
 			var student = {};
 			student.fullname = $('#MainContent_fvPersonal_lblName').text();
-			student.name = student.fullname.split('\s+')[0];
+			student.name = student.fullname.split(" ")[0];
 			student.img = $('#MainContent_fvPersonal_imgStudent').attr('src');
 			student.rollno = $('#MainContent_fvPersonal_lblRollno').text();
 			student.degree = $('#MainContent_fvPersonal_lblDegree').text();
