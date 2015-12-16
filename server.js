@@ -4,13 +4,13 @@ var cors			= require('cors')
 var request			= require('request');
 var cheerio			= require('cheerio');
 var bodyParser		= require('body-parser');
-var port;
-var app = express();
-// Set ip Address
-app.set('ip', process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1");
-// Set port
-port =  process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 7881
 
+// Set ip Address
+var ip_address = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
+// Set port
+var port =  process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 7881;
+
+var app = express();
 app.use(bodyParser.json())
 app.use(bodyParser.json());         // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({
@@ -387,5 +387,6 @@ app.get('/challan', function (req, res) {
 	})
 })
 
-app.listen(port)
-console.log('Magic happens on port 80');
+app.listen(port, ip_address , function () {
+    console.log( "Listening on " + ip_address  + ", server_port " + port )
+});
