@@ -5,12 +5,12 @@ var request			= require('request');
 var cheerio			= require('cheerio');
 var bodyParser		= require('body-parser');
 var port;
-
+var app = express();
+// Set ip Address
 app.set('ip', process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1");
-
+// Set port
 port =  process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 7881
 
-var app = express();
 app.use(bodyParser.json())
 app.use(bodyParser.json());         // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({
