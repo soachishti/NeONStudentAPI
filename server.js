@@ -1,159 +1,387 @@
-#!/bin/env node
-//  OpenShift sample Node application
-var express = require('express');
-var fs      = require('fs');
+﻿var express			= require('express');
+var session			= require('express-session');
+var cors			= require('cors')
+var request			= require('request');
+var cheerio			= require('cheerio');
+var bodyParser		= require('body-parser');
+var port			= process.env.PORT || 7881;
 
+var app = express();
+app.use(bodyParser.json())
+app.use(bodyParser.json());         // to support JSON-encoded bodies
+app.use(bodyParser.urlencoded({
+									// to support URL-encoded bodies
+	extended: true
+}));
 
-/**
- *  Define the sample application.
- */
-var SampleApp = function() {
+app.use(session({
+	name: 'TaizBiskut',
+	secret: 'oRsZmO1LwIyx563DC1V3', 
+	resave: true,
+	saveUninitialized: true,
+    cookie: false,
+    headerName: 'TaizBiskut'
+}))
 
-    //  Scope.
-    var self = this;
+var corsOptions = {
+  origin: true,
+  methods: ['POST'],
+  credentials: true,
+  maxAge: 3600
+};
+app.use(cors(corsOptions));		// For allowing Ajax to access out API
 
+var NeonURL = 'http://nu.edu.pk/NeONStudent/';
 
-    /*  ================================================================  */
-    /*  Helper functions.                                                 */
-    /*  ================================================================  */
+// Remember Cookies
+//var request = request.defaults({ jar: true }) // Saving it in session
 
-    /**
-     *  Set up server IP address and port # using env variables/defaults.
-     */
-    self.setupVariables = function() {
-        //  Set the environment variables we need.
-        self.ipaddress = process.env.OPENSHIFT_NODEJS_IP;
-        self.port      = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+app.get('/', function(req, res){
+    res.send({message:'hello world'});
+});
 
-        if (typeof self.ipaddress === "undefined") {
-            //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
-            //  allows us to run/test the app locally.
-            console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
-            self.ipaddress = "127.0.0.1";
-        };
-    };
+app.get('/load', function (req, res) {
+	// Create Cookie jar	
+	req.session.cookies = request.jar()
+	request = request.defaults({ jar: req.session.cookies })
+	
+	request(NeonURL, function (error, response, html) {
 
+		if (!error) {
+			var $ = cheerio.load(html);
+			req.session.LoginData = {};
+			req.session.LoginData.__EVENTTARGET = $('#__EVENTTARGET').attr('value');
+			req.session.LoginData.__EVENTARGUMENT = $('#__EVENTARGUMENT').attr('value');
+			req.session.LoginData.__VIEWSTATE = $('#__VIEWSTATE').attr('value');
+			req.session.LoginData.__EVENTVALIDATION = $('#__EVENTVALIDATION').attr('value');
+			req.session.LoginData.ddlCampus = 'PWR';
+			req.session.LoginData.username = '';
+			req.session.LoginData.password = '';
+			req.session.LoginData.showPassword = 'on';
+			req.session.LoginData.txtUserCaptcha = '';
+			req.session.LoginData.submit = 'Log in';
+			req.session.LoginData.login1_ClientState = '';
+			
+			captchaImgURI = NeonURL + $('img[src^=CaptchaImage]').attr('src');
+			request({ url: captchaImgURI, encoding: null }, function (error, response, data) {
+				if (!error && response.statusCode == 200) {
+					var captchaImgData = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
+					res.send({captcha:captchaImgData, token:req.sessionID});
+				} 
+				else {
+					res.send({message:"Error getting image."});
+				}
+			});
+		}
+	});
+})
 
-    /**
-     *  Populate the cache.
-     */
-    self.populateCache = function() {
-        if (typeof self.zcache === "undefined") {
-            self.zcache = { 'index.html': '' };
-        }
+// Done - Need to add error handling
+app.post('/login', function (req, res) {
+	console.log("Login POST");
+	if (!req.session.LoginData && !req.session.cookies) { 
+		res.send({message:"First request /load to continue."});
+		return;
+	}
+	console.log("Login POST: Condition successfull");
+	// Get Saved Cookies
+	request = request.defaults({ jar: req.session.cookies })
+	
+	// Get value add in session by Load
+	req.session.LoginData.campus = req.body.campus;
+	req.session.LoginData.username = req.body.username;
+	req.session.LoginData.password = req.body.password;
+	req.session.LoginData.txtUserCaptcha = req.body.captcha;
+	
+	console.log(req.session.campus);
 
-        //  Local cache for static content.
-        self.zcache['index.html'] = fs.readFileSync('./index.html');
-    };
+	request.post({ url: NeonURL, form: req.session.LoginData }, function (error, response, body) {
+		if (!error && response.statusCode == 302) {
+			res.statusCode = 202;
+			req.session.LoggedIn = true;
+			res.send({message:"Login successfull!"});
+		}
+		else {
+			res.statusCode = 200; 
+			if (body.indexOf("Invalid Code") != -1) {
+				res.send({message:"Invalid captcha value!"});
+			}
+			else if (body.indexOf("Login Failed.Try Again") != -1) {
+				res.send({message:"Invalid username or password!"});
+			}
+			else if (body.indexOf("connection") != -1) {
+				res.send({message:"Server switch off!"});
+			}
+			else {
+				res.send({message:"Failed to login without any reason!s"});
+			}
+		}
+	})
+})
 
+//Done
+app.get('/student', function (req, res) {
+	if (!req.session.LoginData && !req.session.cookies) { 
+		res.send({message:'login first'});
+		return;
+	}
+	
+	// Get Saved Cookies
+	request = request.defaults({ jar: req.session.cookies })
 
-    /**
-     *  Retrieve entry (content) from cache.
-     *  @param {string} key  Key identifying content to retrieve from cache.
-     */
-    self.cache_get = function(key) { return self.zcache[key]; };
+	request(NeonURL + '/ViewStudentProfile.aspx', function (error, response, html) {
+	//request('http://localhost/NeonSample/Main.html', function (error, response, html) {
+		if (!error) {
+			var $ = cheerio.load(html);
+			var student = {};
+			student.name = $('#MainContent_fvPersonal_lblName').text();
+			student.rollno = $('#MainContent_fvPersonal_lblRollno').text();
+			student.degree = $('#MainContent_fvPersonal_lblDegree').text();
+			student.batch = $('#MainContent_fvPersonal_lblBatch').text();
+			student.campus = $('#MainContent_fvPersonal_lblCampus').text();
+			student.email = $('#MainContent_fvPersonal_lblEmail').text();
+			
+			res.send({result:JSON.stringify(student, null, 2)});
+		}
+		else {
+			res.send({message:"Fail to get data."});
+		}
+	})
+})
 
+// Done
+app.get('/logout', function (req, res) {
+	req.session.destroy();
+	res.send({message:"Have a good day!"});
+})
 
-    /**
-     *  terminator === the termination handler
-     *  Terminate server on receipt of the specified signal.
-     *  @param {string} sig  Signal to terminate on.
-     */
-    self.terminator = function(sig){
-        if (typeof sig === "string") {
-           console.log('%s: Received %s - terminating sample app ...',
-                       Date(Date.now()), sig);
-           process.exit(1);
-        }
-        console.log('%s: Node server stopped.', Date(Date.now()) );
-    };
+//Done
+app.get('/attendence', function (req, res) {
+	if (!req.session.LoginData && !req.session.cookies) { 
+		res.send({message:'login first'});
+		return;
+	}
+	
+	// Get Saved Cookies
+	request = request.defaults({ jar: req.session.cookies })
 
+	request(NeonURL + '/Registration/ViewStudentAttendance.aspx', function (error, response, html) {
+		if (!error) {
+			var $ = cheerio.load(html);
+			var json = [];			
+			
+			$("#MainContent_pnlRegCourses > table").each(function (index, item) {
+				var tableInfo = {};
+				tableInfo.title = $(item).find("span").first().text().trim();
+				
+				var attendence = [];
+				$(item).find('.grid-viewForAttendance > tr:nth-child(2) td').each(function (j, cell) {
+					var data = $(cell).text().trim();
+					if (data) attendence.push([data]);
+				});
 
-    /**
-     *  Setup termination handlers (for exit and a list of signals).
-     */
-    self.setupTerminationHandlers = function(){
-        //  Process on exit and signals.
-        process.on('exit', function() { self.terminator(); });
+				tableInfo.attendence = attendence;							
 
-        // Removed 'SIGPIPE' from the list - bugz 852598.
-        ['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT',
-         'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM'
-        ].forEach(function(element, index, array) {
-            process.on(element, function() { self.terminator(element); });
-        });
-    };
+				json.push(tableInfo);				
+			});
+			
+			for (var data in json) {
+				console.log();
+				var percentage = json[data].attendence.pop()
+				var presentHour = json[data].attendence.pop()
+				var absentHour = json[data].attendence.pop()
+				json[data].percentage = percentage;
+				json[data].presentHour = presentHour;
+				json[data].absentHour = absentHour;
+			}
+			
+			res.send({result:JSON.stringify(json, null, 2)});
+		}
+		else {
+			res.send({message:"Fail to get data."});
+		}
+	})
 
+})
 
-    /*  ================================================================  */
-    /*  App server functions (main app logic here).                       */
-    /*  ================================================================  */
+app.get('/marks', function (req, res) {
+	if (!req.session.LoginData && !req.session.cookies) {
+		res.send({message:'login first'});
+		return;
+	}
+	
+	// Get Saved Cookies
+	request = request.defaults({ jar: req.session.cookies })
 
-    /**
-     *  Create the routing table entries + handlers for the application.
-     */
-    self.createRoutes = function() {
-        self.routes = { };
+	//request('http://localhost/NeonSample/Marks.html', function (error, response, html) {
+	request(NeonURL + '/Registration/StudentMArksEvaluations.aspx', function (error, response, html) {
+		if (!error) {
+			var $ = cheerio.load(html);
+			var json = [];
+			
+			$("#MainContent_pnlRegCourses > table").each(function (index, item) {
+				var tableInfo = {};
+				tableInfo.title = $(item).find("span").first().text().trim();
+				
+				var marks = [];
+				$(item).find('.grid-view > tr:nth-child(2) td').each(function (j, cell) {
+					var data = $(cell).text().trim();
+					if (data) marks.push({your:data});
+				});
+				
+				tableInfo.marks = marks;
+				
+				json.push(tableInfo);
+			});
+						
+			res.send({result:JSON.stringify(json, null, 2)});
+		}
+		else {
+			res.send({message:"Fail to get data."});
+		}
+	})
 
-        self.routes['/asciimo'] = function(req, res) {
-            var link = "http://i.imgur.com/kmbjB.png";
-            res.send("<html><body><img src='" + link + "'></body></html>");
-        };
+})
 
-        self.routes['/'] = function(req, res) {
-            res.setHeader('Content-Type', 'text/html');
-            res.send(self.cache_get('index.html') );
-        };
-    };
+//Done
+app.get('/courses', function (req, res) {
+	if (!req.session.LoginData && !req.session.cookies) {
+		res.send({message:'login first'});
+		return;
+	}
+	
+	// Get Saved Cookies
+	request = request.defaults({ jar: req.session.cookies })
+	
+	request(NeonURL + '/Registration/StudentREgistration.aspx', function (error, response, html) {
+	//request('http://localhost/NeonSample/RegisteredCourse.html', function (error, response, html) {
+		if (!error) {
+			var $ = cheerio.load(html);
+			var json = {};
+			json.cgpa = $('#MainContent_lblCGPA').text();
+			json.CreditEarned = $('#MainContent_lblCrErn').text();
+			json.CreditLimit = $('#MainContent_lblCreditLimit').text();
+			json.CurrentCredit = $('#MainContent_lblCredits').text();
+			json.warning = $('#MainContent_lblWarning').text();
+			
+			var courses = [];
+			var headers = [];
+			
+			var calls = [];
+			
+			$('#MainContent_GVRegisterCourses th').each(function (index, item) {
+				headers[index] = $(item).text();
+			})
+			
+			$('#MainContent_GVRegisterCourses tr').has('td').each(function () {
+				var CourseInfo = {};
+				$('td', $(this)).each(function (index, item) {
+					CourseInfo[headers[index]] = $(item).text().replace(/[\t\n]+/g, ' ').trim();
+				});
+				courses.push(CourseInfo);
+			});
+			
+			json.courses = courses;
+			res.send({result:JSON.stringify(json, null, 2)});
+		}
+		else {
+			res.send({message:"No course registered."});
+		}
+	})
+	console.log("Leaving");
+})
 
+app.get('/transcript', function (req, res) {
+	if (!req.session.LoginData && !req.session.cookies) { 
+		res.send({message:'login first'});
+		return;
+	}
 
-    /**
-     *  Initialize the server (express) and create the routes and register
-     *  the handlers.
-     */
-    self.initializeServer = function() {
-        self.createRoutes();
-        self.app = express.createServer();
+	// Get Saved Cookies
+	request = request.defaults({ jar: req.session.cookies })
 
-        //  Add handlers for the app (from the routes).
-        for (var r in self.routes) {
-            self.app.get(r, self.routes[r]);
-        }
-    };
+	request(NeonURL + '/Registration/StudentTranscript.aspx', function (error, response, html) {
+	//request('http://localhost/NeonSample/transcript.html', function (error, response, html) {
+		if (!error) {
+			jsonResponse = [];
+            var $ = cheerio.load(html);
+           
+            //https://github.com/iaincollins/tabletojson
+            $("table[class='grid-view']").each(function(i, table) {
+                var tableAsJson = [];
+                var columnHeadings = [];
+                $(table).find('tr').each(function(i, row) {
+                    $(row).find('th').each(function(j, cell) {
+                        columnHeadings[j] = $(cell).text().trim();
+                    });
+                });
 
+                // Fetch each row
+                $(table).find('tr').each(function(i, row) {
+                    var rowAsJson = {};
+                    $(row).find('td').each(function(j, cell) {
+                        if (columnHeadings[j]) {
+                            rowAsJson[ columnHeadings[j] ] = $(cell).text().trim();
+                        } else {
+                            rowAsJson[j] = $(cell).text().trim();
+                        }
+                    });
+                    
+                    // Skip blank rows
+                    if (JSON.stringify(rowAsJson) != '{}')
+                        tableAsJson.push(rowAsJson);
+                });
 
-    /**
-     *  Initializes the sample application.
-     */
-    self.initialize = function() {
-        self.setupVariables();
-        self.populateCache();
-        self.setupTerminationHandlers();
+                // Add the table to the response
+                if (tableAsJson.length != 0)
+                    jsonResponse.push({semester:i+1, grade:tableAsJson});
+            });
+  			res.send({result:jsonResponse});
+		}
+		else {
+			res.send({message:"Fail to get data."});
+		}
+	})
+})
 
-        // Create the express server and routes.
-        self.initializeServer();
-    };
+// Done
+app.get('/challan', function (req, res) {
+	if (!req.session.LoginData && !req.session.cookies) {
+		res.send({message:'login first'});
+		return;
+	}
+	
+	// Get Saved Cookies
+	request = request.defaults({ jar: req.session.cookies })
 
+	request(NeonURL + '/FMS/GenerateChallan.aspx', function (error, response, html) {
+	//request('http://localhost/NeonSample/Challan.html', function (error, response, html) {
+		console.log("In courses request");
+		if (!error) {
+			var $ = cheerio.load(html);
+			var json = {};
+			var challans = [];
+			var headers = [];
+			$('#MainContent_gvChallan th').each(function (index, item) {
+				headers[index] = $(item).text();
+			});
+			$('#MainContent_gvChallan tr').has('td').each(function () {
+				var ChalanInfo = {};
+				$('td', $(this)).each(function (index, item) {
+					ChalanInfo[headers[index]] = $(item).text().replace(/[\t\n]+/g, ' ').trim();
+				});
+				console.log(ChalanInfo);
+				challans.push(ChalanInfo);
+			})
+			json = challans;
+			
+			res.send({result:JSON.stringify(json, null, 2)});
+		}
+		else {
+			res.send({message:"No chalan to show."});
+		}
+	})
+})
 
-    /**
-     *  Start the server (starts up the sample application).
-     */
-    self.start = function() {
-        //  Start the app on the specific interface (and port).
-        self.app.listen(self.port, self.ipaddress, function() {
-            console.log('%s: Node server started on %s:%d ...',
-                        Date(Date.now() ), self.ipaddress, self.port);
-        });
-    };
-
-};   /*  Sample Application.  */
-
-
-
-/**
- *  main():  Main code.
- */
-var zapp = new SampleApp();
-zapp.initialize();
-zapp.start();
-
+app.listen(port)
+console.log('Magic happens on port 80');
