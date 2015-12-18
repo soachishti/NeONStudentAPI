@@ -7,7 +7,8 @@ var request			= require('request');
 var cheerio			= require('cheerio');
 var bodyParser		= require('body-parser');
 var uuid            = require('node-uuid');
-var MongoStore 		= require('connect-mongo')(session);
+var MongoDBStore 	= require('connect-mongodb-session')(session);
+
 
 var ip_address = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 var port =  process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 7881;
@@ -30,9 +31,12 @@ var session_option = {
 };
 
 if (process.env.OPENSHIFT_MONGODB_DB_URL) {
-	session_option.store = new MongoStore({
-        url: process.env.OPENSHIFT_MONGODB_DB_URL
-    });
+	
+	session_option.store = new MongoDBStore(
+	{ 
+		uri: process.env.OPENSHIFT_MONGODB_DB_URL,
+		collection: 'Biskut'
+	});
 }
 
 app.use(session(session_option));

@@ -11,7 +11,7 @@
     "express-session" : "latest",
     "request"         : "^2.67.0",
     "node-uuid"       : "latest",
-	"connect-mongo"	  : "latest"
+	"connect-mongodb-session"	  : "latest"
   },
   "description" : "NeON Student for Mobile - API",
   "main"        : "server.js",
