@@ -14,8 +14,7 @@ var NeonURL = 'http://nu.edu.pk/NeONStudent/';
 var app = express();
 app.use(bodyParser.json());         // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({
-									// to support URL-encoded bodies
-	extended: true
+	extended: true					// to support URL-encoded bodies
 }));
 
 
@@ -28,10 +27,9 @@ var session_option = {
     cookie: false,
 };
 
-// Testing
-if (!process.env.OPENSHIFT_MONGODB_DB_URL) {
+if (process.env.OPENSHIFT_MONGODB_DB_URL) {
 	session_option.store = new MongoStore({
-        url: process.env.OPENSHIFT_MONGODB_DB_URL,
+        url: process.env.OPENSHIFT_MONGODB_DB_URL
     });
 }
 

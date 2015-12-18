@@ -13,9 +13,9 @@
     "node-uuid"       : "latest",
 	"connect-mongo"	  : "latest"
   },
-  "description" : "TaizNeonStudentAPI",
+  "description" : "NeONStudentMobileAPI",
   "main"        : "server.js",
-  "name"        : "TaizNeonStudentAPI",
+  "name"        : "NeONStudentMobileAPI",
   "version"     : "0.0.1",
   "scripts": {
     "start": "node server.js"
