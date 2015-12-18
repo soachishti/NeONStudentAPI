@@ -5,14 +5,13 @@ var request			= require('request');
 var cheerio			= require('cheerio');
 var bodyParser		= require('body-parser');
 var uuid            = require('node-uuid');
+var MongoStore 		= require('connect-mongo')(session);
 
-// Set ip Address
 var ip_address = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
-// Set port
 var port =  process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 7881;
+var NeonURL = 'http://nu.edu.pk/NeONStudent/';
 
 var app = express();
-app.use(bodyParser.json())
 app.use(bodyParser.json());         // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({
 									// to support URL-encoded bodies
@@ -21,12 +20,14 @@ app.use(bodyParser.urlencoded({
 
 app.use(session({
     genid: function(req) { return uuid.v1(); },
-	name: 'TaizBiskut',
+	name: 'Biskut',
 	secret: 'oRsZmO1LwIyx563DC1V3', 
 	resave: true,
 	saveUninitialized: true,
-    cookie: false
-    //headerName: 'TaizBiskut'      // Not supported yet!
+    cookie: false,
+    store: new MongoStore({
+        url: process.env.OPENSHIFT_MONGODB_DB_URL,
+    })
 }))
 
 var corsOptions = {
@@ -37,10 +38,6 @@ var corsOptions = {
 };
 app.use(cors(corsOptions));		// For allowing Ajax to access out API
 
-var NeonURL = 'http://nu.edu.pk/NeONStudent/';
-
-// Remember Cookies
-//var request = request.defaults({ jar: true }) // Saving it in session
 
 app.get('/', function(req, res){
     res.send({message:'hello world'});
@@ -125,7 +122,6 @@ app.post('/login', function (req, res) {
 	})
 })
 
-//Done
 app.get('/student', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) { 
 		res.send({message:'login first'});
@@ -142,14 +138,22 @@ app.get('/student', function (req, res) {
 			var student = {};
 			student.fullname = $('#MainContent_fvPersonal_lblName').text();
 			student.name = student.fullname.split(" ")[0];
-			student.img = $('#MainContent_fvPersonal_imgStudent').attr('src');
 			student.rollno = $('#MainContent_fvPersonal_lblRollno').text();
 			student.degree = $('#MainContent_fvPersonal_lblDegree').text();
 			student.batch = $('#MainContent_fvPersonal_lblBatch').text();
 			student.campus = $('#MainContent_fvPersonal_lblCampus').text();
 			student.email = $('#MainContent_fvPersonal_lblEmail').text();
 			
-			res.send({result:JSON.stringify(student, null, 2)});
+			var ImgURI = NeonURL + $('#MainContent_fvPersonal_imgStudent').attr('src');
+			request({ url: ImgURI, encoding: null }, function (error, response, data) {
+				if (!error && response.statusCode == 200) {
+					student.img = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
+					res.send({result:JSON.stringify(student, null, 2)});				
+				} 
+				else {
+					res.send({message:"Error getting image."});
+				}
+			});
 		}
 		else {
 			res.send({message:"Fail to get data."});
@@ -157,13 +161,11 @@ app.get('/student', function (req, res) {
 	})
 })
 
-// Done
 app.get('/logout', function (req, res) {
 	req.session.destroy();
 	res.send({message:"Have a good day!"});
 })
 
-//Done
 app.get('/attendence', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) { 
 		res.send({message:'login first'});
@@ -251,7 +253,6 @@ app.get('/marks', function (req, res) {
 
 })
 
-//Done
 app.get('/courses', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) {
 		res.send({message:'login first'});
@@ -352,7 +353,6 @@ app.get('/transcript', function (req, res) {
 	})
 })
 
-// Done
 app.get('/challan', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) {
 		res.send({message:'login first'});

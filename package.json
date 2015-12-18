@@ -10,7 +10,8 @@
     "express"         : "^4.13.3",
     "express-session" : "latest",
     "request"         : "^2.67.0",
-    "node-uuid"       : "latest"
+    "node-uuid"       : "latest",
+	"connect-mongo"	  : "latest"
   },
   "description" : "TaizNeonStudentAPI",
   "main"        : "server.js",
