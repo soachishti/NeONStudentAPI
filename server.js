@@ -1,4 +1,6 @@
-﻿var express			= require('express');
+﻿'use strict';
+
+var express			= require('express');
 var session			= require('express-session');
 var cors			= require('cors')
 var request			= require('request');
@@ -41,8 +43,8 @@ var corsOptions = {
   credentials: true,
   maxAge: 3600
 };
-app.use(cors(corsOptions));		// For allowing Ajax to access out API
 
+app.use(cors(corsOptions));		// For allowing Ajax to access out API
 
 app.get('/', function(req, res){
     res.send({message:'hello world'});

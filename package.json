@@ -13,7 +13,7 @@
     "node-uuid"       : "latest",
 	"connect-mongo"	  : "latest"
   },
-  "description" : "NeONStudentMobileAPI",
+  "description" : "NeON Student for Mobile - API",
   "main"        : "server.js",
   "name"        : "NeONStudentMobileAPI",
   "version"     : "0.0.1",
