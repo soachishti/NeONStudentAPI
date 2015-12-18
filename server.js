@@ -28,7 +28,8 @@ var session_option = {
     cookie: false,
 };
 
-if (process.env.OPENSHIFT_MONGODB_DB_URL) {
+// Testing
+if (!process.env.OPENSHIFT_MONGODB_DB_URL) {
 	session_option.store = new MongoStore({
         url: process.env.OPENSHIFT_MONGODB_DB_URL,
     });
