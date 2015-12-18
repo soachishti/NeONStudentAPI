@@ -18,17 +18,23 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }));
 
-app.use(session({
+
+var session_option = {
     genid: function(req) { return uuid.v1(); },
 	name: 'Biskut',
 	secret: 'oRsZmO1LwIyx563DC1V3', 
 	resave: true,
 	saveUninitialized: true,
     cookie: false,
-    store: new MongoStore({
+};
+
+if (process.env.OPENSHIFT_MONGODB_DB_URL) {
+	session_option.store = new MongoStore({
         url: process.env.OPENSHIFT_MONGODB_DB_URL,
-    })
-}))
+    });
+}
+
+app.use(session(session_option));
 
 var corsOptions = {
   origin: true,
