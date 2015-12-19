@@ -1,0 +1,1 @@
+apidoc -f server.js -o apidoc/

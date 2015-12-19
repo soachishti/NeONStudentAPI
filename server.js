@@ -14,12 +14,13 @@ var ip_address = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 var port =  process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 7881;
 var NeonURL = 'http://nu.edu.pk/NeONStudent/';
 
+
 var app = express();
 app.use(bodyParser.json());         // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({
 	extended: true					// to support URL-encoded bodies
 }));
-
+app.use('/documentation', express.static('apidoc'));
 
 var session_option = {
     genid: function(req) { return uuid.v1(); },
@@ -31,7 +32,6 @@ var session_option = {
 };
 
 if (process.env.OPENSHIFT_MONGODB_DB_URL) {
-	
 	session_option.store = new MongoDBStore(
 	{ 
 		uri: process.env.OPENSHIFT_MONGODB_DB_URL,
@@ -50,10 +50,25 @@ var corsOptions = {
 
 app.use(cors(corsOptions));		// For allowing Ajax to access out API
 
+/**
+ * @api {get} / Access to documentation
+ * @apiName Load Documentation
+ * @apiGroup Info
+ *
+ * @apiSuccess {String} HTML Redirect to documentation folder \apidoc
+ */
 app.get('/', function(req, res){
-    res.send({message:'hello world'});
+	res.redirect('/documentation');	
 });
 
+/**
+ * @api {get} /load Return captcha image and set session for next call eg. login
+ * @apiName Load NeON Session
+ * @apiGroup Login
+ *
+ * @apiSuccess {String} captcha Base64 encoded value of captcha image.
+ * @apiSuccess {String} token Unique ID of session, Which is also send in cookie for maintaining session.
+ */
 app.get('/load', function (req, res) {
 	// Create Cookie jar	
 	req.session.cookies = request.jar()
@@ -83,21 +98,35 @@ app.get('/load', function (req, res) {
 					res.send({captcha:captchaImgData, token:req.sessionID});
 				} 
 				else {
-					res.send({message:"Error getting image."});
+					res.statusCode = 406;
+					res.send({error:"Error getting image."});
 				}
 			});
 		}
 	});
 })
 
-// Done - Need to add error handling
+/**
+ * @api {post} /login Log user to NeON Student Modules
+ * @apiName Login To NeON
+ * @apiGroup Login
+ *
+ * @apiParam {String} username NeON username.
+ * @apiParam {String} password NeON password.
+ * @apiParam {String} txtUserCaptcha Captcha solution of the image given in \load request.
+ * @apiParam {String} campus Campus name such as PWR, ISB, KHI, .
+ *
+ * @apiSuccess {String} message true
+ * @apiError error Reason for failing to login such wrong captcha, credential or server down.
+ */
 app.post('/login', function (req, res) {
 	console.log("Login POST");
 	if (!req.session.LoginData && !req.session.cookies) { 
-		res.send({message:"First request /load to continue."});
+		res.statusCode = 406; 
+		res.send({error:"First request /load to continue."});
 		return;
 	}
-	console.log("Login POST: Condition successfull");
+
 	// Get Saved Cookies
 	request = request.defaults({ jar: req.session.cookies })
 	
@@ -107,34 +136,47 @@ app.post('/login', function (req, res) {
 	req.session.LoginData.password = req.body.password;
 	req.session.LoginData.txtUserCaptcha = req.body.captcha;
 	
-	console.log(req.session.campus);
-
 	request.post({ url: NeonURL, form: req.session.LoginData }, function (error, response, body) {
 		if (!error && response.statusCode == 302) {
-			res.statusCode = 202;
+			res.statusCode = 200;
 			req.session.LoggedIn = true;
-			res.send({message:"Login successfull!"});
+			res.send({message:true});
 		}
 		else {
-			res.statusCode = 200; 
+			res.statusCode = 406; 
 			if (body.indexOf("Invalid Code") != -1) {
-				res.send({message:"Invalid captcha value!"});
+				res.send({error:"Invalid captcha value!"});
 			}
 			else if (body.indexOf("Login Failed.Try Again") != -1) {
-				res.send({message:"Invalid username or password!"});
+				res.send({error:"Invalid username or password!"});
 			}
 			else if (body.indexOf("connection") != -1) {
-				res.send({message:"Server switch off!"});
+				res.send({error:"Server switch off!"});
 			}
 			else {
-				res.send({message:"Failed to login without any reason!s"});
+				res.send({error:"Failed to login without any reason!s"});
 			}
 		}
 	})
 })
 
+/**
+ * @api {get} /student Get student information
+ * @apiName Get Student Information
+ * @apiGroup Info
+ *
+ * @apiSuccess {String} fullname Student full name
+ * @apiSuccess {String} name Student first name
+ * @apiSuccess {String} rollno Student roll no
+ * @apiSuccess {String} degree Student degree eg. CS, EE
+ * @apiSuccess {String} batch Student Campus eg. 2014, 2015
+ * @apiSuccess {String} campus Student campus eg. Peshawar, Karachi
+ * @apiSuccess {String} email Student email address
+ * @apiError error Reason for failing.
+ */
 app.get('/student', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) { 
+		res.statusCode = 406; 
 		res.send({message:'login first'});
 		return;
 	}
@@ -159,27 +201,45 @@ app.get('/student', function (req, res) {
 			request({ url: ImgURI, encoding: null }, function (error, response, data) {
 				if (!error && response.statusCode == 200) {
 					student.img = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
-					res.send({result:JSON.stringify(student, null, 2)});				
+					res.send(student);				
 				} 
 				else {
-					res.send({message:"Error getting image."});
+					res.statusCode = 406; 
+					res.send({error:"Error getting image."});
 				}
 			});
 		}
 		else {
-			res.send({message:"Fail to get data."});
+			res.statusCode = 406; 			
+			res.send({error:"Fail to get data."});
 		}
 	})
 })
 
+/**
+ * @api {get} /logout Delete all session data
+ * @apiName Logout
+ * @apiGroup Option
+ *
+ * @apiSuccess {String} message "Have a good day!" and Delete all session data
+ */
 app.get('/logout', function (req, res) {
 	req.session.destroy();
 	res.send({message:"Have a good day!"});
 })
 
+/**
+ * @api {get} /attendence Return Attendence information of student
+ * @apiName Attendence Information
+ * @apiGroup Info
+ *
+ * @apiSuccess {String} result JSON formated array data with title, percentage, percentHour, absentHour
+ * @apiError error Reason for failing to get data.
+ */
 app.get('/attendence', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) { 
-		res.send({message:'login first'});
+		res.statusCode = 406; 
+		res.send({error:'login first'});
 		return;
 	}
 	
@@ -219,15 +279,25 @@ app.get('/attendence', function (req, res) {
 			res.send({result:JSON.stringify(json, null, 2)});
 		}
 		else {
-			res.send({message:"Fail to get data."});
+			res.statusCode = 406; 
+			res.send({error:"Fail to get data."});
 		}
 	})
 
 })
 
+/**
+ * @api {get} /marks Return marks of student
+ * @apiName Student Marks
+ * @apiGroup Info
+ *
+ * @apiSuccess {String} result JSON formated array data with title, and marks
+ * @apiError error Reason for failing to get data.
+ */
 app.get('/marks', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) {
-		res.send({message:'login first'});
+		res.statusCode = 406; 
+		res.send({error:'login first'});
 		return;
 	}
 	
@@ -258,15 +328,25 @@ app.get('/marks', function (req, res) {
 			res.send({result:JSON.stringify(json, null, 2)});
 		}
 		else {
-			res.send({message:"Fail to get data."});
+			res.statusCode = 406; 
+			res.send({error:"Fail to get data."});
 		}
 	})
 
 })
 
+/**
+ * @api {get} /courses Return courses of student
+ * @apiName Student All Courses
+ * @apiGroup Info
+ *
+ * @apiSuccess {String} result JSON formated array data with cgpa, CreditEarned, CreditLimit, CurrentCredit, warning and courses list
+ * @apiError error Reason for failing to get data.
+ */
 app.get('/courses', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) {
-		res.send({message:'login first'});
+		res.statusCode = 406; 
+		res.send({error:'login first'});
 		return;
 	}
 	
@@ -305,15 +385,24 @@ app.get('/courses', function (req, res) {
 			res.send({result:JSON.stringify(json, null, 2)});
 		}
 		else {
-			res.send({message:"No course registered."});
+			res.statusCode = 406; 
+			res.send({error:"No course registered."});
 		}
 	})
-	console.log("Leaving");
 })
 
+/**
+ * @api {get} /transcript Return transcript of student
+ * @apiName Student Transcript
+ * @apiGroup Info
+ *
+ * @apiSuccess {String} result JSON formated array data with index semester number and data inside each.
+ * @apiError error Reason for failing to get data.
+ */
 app.get('/transcript', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) { 
-		res.send({message:'login first'});
+		res.statusCode = 406; 
+		res.send({error:'login first'});
 		return;
 	}
 
@@ -359,14 +448,24 @@ app.get('/transcript', function (req, res) {
   			res.send({result:jsonResponse});
 		}
 		else {
-			res.send({message:"Fail to get data."});
+			res.statusCode = 406; 			
+			res.send({error:"Fail to get data."});
 		}
 	})
 })
 
+/**
+ * @api {get} /challan Return paid and pending challan
+ * @apiName Student Fee Challan
+ * @apiGroup Info
+ *
+ * @apiSuccess {String} result JSON formated data similar to table in NeON site because it is direct scrape.
+ * @apiError error Reason for failing to get data.
+ */
 app.get('/challan', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) {
-		res.send({message:'login first'});
+		res.statusCode = 406; 
+		res.send({error:'login first'});
 		return;
 	}
 	
@@ -374,7 +473,6 @@ app.get('/challan', function (req, res) {
 	request = request.defaults({ jar: req.session.cookies })
 
 	request(NeonURL + '/FMS/GenerateChallan.aspx', function (error, response, html) {
-	//request('http://localhost/NeonSample/Challan.html', function (error, response, html) {
 		console.log("In courses request");
 		if (!error) {
 			var $ = cheerio.load(html);
@@ -397,7 +495,8 @@ app.get('/challan', function (req, res) {
 			res.send({result:JSON.stringify(json, null, 2)});
 		}
 		else {
-			res.send({message:"No chalan to show."});
+			res.statusCode = 406; 
+			res.send({error:"No chalan to show."});
 		}
 	})
 })
