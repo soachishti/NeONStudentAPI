@@ -8,7 +8,8 @@ var request			= require('request');
 var cheerio			= require('cheerio');
 var bodyParser		= require('body-parser');
 var uuid            = require('node-uuid');
-var SQLiteStore 	= require('connect-sqlite3')(session);
+var FileStore 		= require('session-file-store')(session);
+//var SQLiteStore 	= require('connect-sqlite3')(session);
 
 var ip_address = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 var port =  process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 7881;
@@ -28,7 +29,8 @@ var session_option = {
 	resave: true,
 	saveUninitialized: true,
     cookie: false,
-	store: new SQLiteStore({db:"BiskutStore", table:"Biskuts"})
+	store: new FileStore({path:"./BiskutStore", encrypt:true}),
+	//store: new SQLiteStore({db:"BiskutStore", table:"Biskuts"})
 };
 
 app.use(session(session_option));
