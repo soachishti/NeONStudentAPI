@@ -28,7 +28,7 @@ var session_option = {
 	resave: true,
 	saveUninitialized: true,
     cookie: false,
-	store: new SQLiteStore({db:"BiskutStore"})
+	store: new SQLiteStore({db:"BiskutStore", table:"Biskuts"})
 };
 
 app.use(session(session_option));
