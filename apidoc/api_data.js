@@ -2,7 +2,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/attendence",
-    "title": "Return Attendence information of student",
+    "title": "Attendence",
     "name": "Attendence_Information",
     "group": "Info",
     "success": {
@@ -37,7 +37,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/student",
-    "title": "Get student information",
+    "title": "Student",
     "name": "Get_Student_Information",
     "group": "Info",
     "success": {
@@ -72,7 +72,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/",
-    "title": "Access to documentation",
+    "title": "Access Doc",
     "name": "Load_Documentation",
     "group": "Info",
     "success": {
@@ -95,7 +95,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/courses",
-    "title": "Return courses of student",
+    "title": "Courses",
     "name": "Student_All_Courses",
     "group": "Info",
     "success": {
@@ -130,7 +130,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/challan",
-    "title": "Return paid and pending challan",
+    "title": "Challan",
     "name": "Student_Fee_Challan",
     "group": "Info",
     "success": {
@@ -165,7 +165,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/marks",
-    "title": "Return marks of student",
+    "title": "Marks",
     "name": "Student_Marks",
     "group": "Info",
     "success": {
@@ -200,7 +200,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/transcript",
-    "title": "Return transcript of student",
+    "title": "Transcript",
     "name": "Student_Transcript",
     "group": "Info",
     "success": {
@@ -235,7 +235,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/load",
-    "title": "Return captcha image and set session for next call eg. login",
+    "title": "Initialize Session",
     "name": "Load_NeON_Session",
     "group": "Login",
     "success": {
@@ -265,7 +265,7 @@ define({ "api": [
   {
     "type": "post",
     "url": "/login",
-    "title": "Log user to NeON Student Modules",
+    "title": "Log In",
     "name": "Login_To_NeON",
     "group": "Login",
     "parameter": {
@@ -334,7 +334,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/logout",
-    "title": "Delete all session data",
+    "title": "Destroy Session",
     "name": "Logout",
     "group": "Option",
     "success": {

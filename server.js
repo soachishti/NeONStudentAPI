@@ -20,7 +20,7 @@ app.use(bodyParser.json());         // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({
 	extended: true					// to support URL-encoded bodies
 }));
-app.use('/documentation', express.static('apidoc'));
+app.use('/docs', express.static('apidoc'));
 
 var session_option = {
     genid: function(req) { return uuid.v1(); },
@@ -45,18 +45,18 @@ var corsOptions = {
 app.use(cors(corsOptions));		// For allowing Ajax to access out API
 
 /**
- * @api {get} / Access to documentation
+ * @api {get} / Access Doc
  * @apiName Load Documentation
  * @apiGroup Info
  *
  * @apiSuccess {String} HTML Redirect to documentation folder \apidoc
  */
 app.get('/', function(req, res){
-	res.redirect('/documentation');	
+	res.redirect('/docs');	
 });
 
 /**
- * @api {get} /load Return captcha image and set session for next call eg. login
+ * @api {get} /load Initialize Session
  * @apiName Load NeON Session
  * @apiGroup Login
  *
@@ -105,7 +105,7 @@ app.get('/load', function (req, res) {
 })
 
 /**
- * @api {post} /login Log user to NeON Student Modules
+ * @api {post} /login Log In 
  * @apiName Login To NeON
  * @apiGroup Login
  *
@@ -159,7 +159,7 @@ app.post('/login', function (req, res) {
 })
 
 /**
- * @api {get} /student Get student information
+ * @api {get} /student Student
  * @apiName Get Student Information
  * @apiGroup Info
  *
@@ -209,7 +209,7 @@ app.get('/student', function (req, res) {
 })
 
 /**
- * @api {get} /logout Delete all session data
+ * @api {get} /logout Destroy Session
  * @apiName Logout
  * @apiGroup Option
  *
@@ -221,7 +221,7 @@ app.get('/logout', function (req, res) {
 })
 
 /**
- * @api {get} /attendence Return Attendence information of student
+ * @api {get} /attendence Attendence
  * @apiName Attendence Information
  * @apiGroup Info
  *
@@ -279,7 +279,7 @@ app.get('/attendence', function (req, res) {
 })
 
 /**
- * @api {get} /marks Return marks of student
+ * @api {get} /marks Marks
  * @apiName Student Marks
  * @apiGroup Info
  *
@@ -328,7 +328,7 @@ app.get('/marks', function (req, res) {
 })
 
 /**
- * @api {get} /courses Return courses of student
+ * @api {get} /courses Courses
  * @apiName Student All Courses
  * @apiGroup Info
  *
@@ -384,7 +384,7 @@ app.get('/courses', function (req, res) {
 })
 
 /**
- * @api {get} /transcript Return transcript of student
+ * @api {get} /transcript Transcript
  * @apiName Student Transcript
  * @apiGroup Info
  *
@@ -447,7 +447,7 @@ app.get('/transcript', function (req, res) {
 })
 
 /**
- * @api {get} /challan Return paid and pending challan
+ * @api {get} /challan Challan
  * @apiName Student Fee Challan
  * @apiGroup Info
  *
