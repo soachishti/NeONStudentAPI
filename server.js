@@ -70,7 +70,7 @@ app.get('/load', function (req, res) {
 	
 	request(NeonURL, function (error, response, html) {
 
-		if (!error) {
+		if (!error && response.statusCode == 200) {
 			var $ = cheerio.load(html);
 			req.session.LoginData = {};
 			req.session.LoginData.__EVENTTARGET = $('#__EVENTTARGET').attr('value');
@@ -85,7 +85,7 @@ app.get('/load', function (req, res) {
 			req.session.LoginData.submit = 'Log in';
 			req.session.LoginData.login1_ClientState = '';
 			
-			captchaImgURI = NeonURL + $('img[src^=CaptchaImage]').attr('src');
+			var captchaImgURI = NeonURL + $('img[src^=CaptchaImage]').attr('src');
 			request({ url: captchaImgURI, encoding: null }, function (error, response, data) {
 				if (!error && response.statusCode == 200) {
 					var captchaImgData = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
@@ -96,6 +96,10 @@ app.get('/load', function (req, res) {
 					res.send({error:"Error getting image."});
 				}
 			});
+		}
+		else {
+			res.statusCode = 406;
+			res.send({error:"Server failed to responsed."});			
 		}
 	});
 })
@@ -110,7 +114,7 @@ app.get('/load', function (req, res) {
  * @apiParam {String} txtUserCaptcha Captcha solution of the image given in \load request.
  * @apiParam {String} campus Campus name such as PWR, ISB, KHI, .
  *
- * @apiSuccess {String} message true
+ * @apiSuccess {String} result true
  * @apiError error Reason for failing to login such wrong captcha, credential or server down.
  */
 app.post('/login', function (req, res) {
@@ -134,7 +138,7 @@ app.post('/login', function (req, res) {
 		if (!error && response.statusCode == 302) {
 			res.statusCode = 200;
 			req.session.LoggedIn = true;
-			res.send({message:true});
+			res.send({result:true});
 		}
 		else {
 			res.statusCode = 406; 
@@ -159,19 +163,13 @@ app.post('/login', function (req, res) {
  * @apiName Get Student Information
  * @apiGroup Info
  *
- * @apiSuccess {String} fullname Student full name
- * @apiSuccess {String} name Student first name
- * @apiSuccess {String} rollno Student roll no
- * @apiSuccess {String} degree Student degree eg. CS, EE
- * @apiSuccess {String} batch Student Campus eg. 2014, 2015
- * @apiSuccess {String} campus Student campus eg. Peshawar, Karachi
- * @apiSuccess {String} email Student email address
+ * @apiSuccess {String} result JSON formatted data with fullname, name, rollno, degree, batch, campus and email.
  * @apiError error Reason for failing.
  */
 app.get('/student', function (req, res) {
 	if (!req.session.LoginData && !req.session.cookies) { 
 		res.statusCode = 406; 
-		res.send({message:'login first'});
+		res.send({error:'login first'});
 		return;
 	}
 	
@@ -195,7 +193,7 @@ app.get('/student', function (req, res) {
 			request({ url: ImgURI, encoding: null }, function (error, response, data) {
 				if (!error && response.statusCode == 200) {
 					student.img = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
-					res.send(student);				
+					res.send({result:student});				
 				} 
 				else {
 					res.statusCode = 406; 
@@ -219,7 +217,7 @@ app.get('/student', function (req, res) {
  */
 app.get('/logout', function (req, res) {
 	req.session.destroy();
-	res.send({message:"Have a good day!"});
+	res.send({result:"Have a good day!"});
 })
 
 /**

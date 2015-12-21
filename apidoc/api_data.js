@@ -47,50 +47,8 @@ define({ "api": [
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "fullname",
-            "description": "<p>Student full name</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "name",
-            "description": "<p>Student first name</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "rollno",
-            "description": "<p>Student roll no</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "degree",
-            "description": "<p>Student degree eg. CS, EE</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "batch",
-            "description": "<p>Student Campus eg. 2014, 2015</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "campus",
-            "description": "<p>Student campus eg. Peshawar, Karachi</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "email",
-            "description": "<p>Student email address</p>"
+            "field": "result",
+            "description": "<p>JSON formatted data with fullname, name, rollno, degree, batch, campus and email.</p>"
           }
         ]
       }
@@ -125,7 +83,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "HTML",
-            "description": "<p>Redirect to documentation of api</p>"
+            "description": "<p>Redirect to documentation folder \\apidoc</p>"
           }
         ]
       }
@@ -351,7 +309,7 @@ define({ "api": [
             "group": "Success 200",
             "type": "String",
             "optional": false,
-            "field": "message",
+            "field": "result",
             "description": "<p>true</p>"
           }
         ]
