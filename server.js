@@ -134,7 +134,7 @@ app.post('/login', function (req, res) {
 	req.session.LoginData.password = req.body.password;
 	req.session.LoginData.txtUserCaptcha = req.body.captcha;
 	
-	request.post({ url: NeonURL, form: req.session.LoginData }, function (error, response, body) {
+	request.post({ url: NeonURL, form: req.session.LoginData, timeout: 3000}, function (error, response, body) {
 		if (!error && response.statusCode == 302) {
 			res.statusCode = 200;
 			req.session.LoggedIn = true;
@@ -152,7 +152,7 @@ app.post('/login', function (req, res) {
 				res.send({error:"Server switch off!"});
 			}
 			else {
-				res.send({error:"Failed to login without any reason!s"});
+				res.send({error:"Failed to login because server didn't responed in given time."});
 			}
 		}
 	})
