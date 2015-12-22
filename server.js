@@ -68,7 +68,7 @@ app.get('/load', function (req, res) {
 	req.session.cookies = request.jar()
 	request = request.defaults({ jar: req.session.cookies })
 	
-	request(NeonURL, function (error, response, html) {
+	request({url: NeonURL, timeout: 3000}, function (error, response, html) {
 
 		if (!error && response.statusCode == 200) {
 			var $ = cheerio.load(html);
@@ -86,14 +86,14 @@ app.get('/load', function (req, res) {
 			req.session.LoginData.login1_ClientState = '';
 			
 			var captchaImgURI = NeonURL + $('img[src^=CaptchaImage]').attr('src');
-			request({ url: captchaImgURI, encoding: null }, function (error, response, data) {
+			request({ url: captchaImgURI, encoding: null, timeout: 3000}, function (error, response, data) {
 				if (!error && response.statusCode == 200) {
 					var captchaImgData = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
 					res.send({captcha:captchaImgData, token:req.sessionID});
 				} 
 				else {
 					res.statusCode = 406;
-					res.send({error:"Error getting image."});
+					res.send({error:"Error getting image, Please try again."});
 				}
 			});
 		}
@@ -148,7 +148,7 @@ app.post('/login', function (req, res) {
 			else if (body.indexOf("Login Failed.Try Again") != -1) {
 				res.send({error:"Invalid username or password!"});
 			}
-			else if (body.indexOf("connection") != -1) {
+			else if (body.indexOf("Something goes wrong with the connection") != -1) {
 				res.send({error:"Server switch off!"});
 			}
 			else {
@@ -177,8 +177,7 @@ app.get('/student', function (req, res) {
 	request = request.defaults({ jar: req.session.cookies })
 
 	request(NeonURL + '/ViewStudentProfile.aspx', function (error, response, html) {
-	//request('http://localhost/NeonSample/Main.html', function (error, response, html) {
-		if (!error) {
+	if (!error) {
 			var $ = cheerio.load(html);
 			var student = {};
 			student.fullname = $('#MainContent_fvPersonal_lblName').text();
@@ -296,7 +295,6 @@ app.get('/marks', function (req, res) {
 	// Get Saved Cookies
 	request = request.defaults({ jar: req.session.cookies })
 
-	//request('http://localhost/NeonSample/Marks.html', function (error, response, html) {
 	request(NeonURL + '/Registration/StudentMArksEvaluations.aspx', function (error, response, html) {
 		if (!error) {
 			var $ = cheerio.load(html);
