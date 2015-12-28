@@ -168,7 +168,7 @@ app.post('/login', function(req, res) {
         form: req.session.LoginData,
         timeout: 10000
     }, function(error, response, body) {
-        if (!error && response.statusCode == 302) {
+        if (!error && response.statusCode == 200) {
             res.statusCode = 200;
             req.session.LoggedIn = true;
             res.send({
@@ -190,7 +190,7 @@ app.post('/login', function(req, res) {
                 });
             } else {
                 res.send({
-                    error: "Failed to login because server didn't responed in given time."
+                    error: "Failed to login because server didn't responed in given time. - " + response.statusCode 
                 });
             }
         }
