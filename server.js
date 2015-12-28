@@ -1,4 +1,6 @@
 ﻿//http://www.w3schools.com/jsref/jsref_match.asp
+//id=MainContent_lblerror
+
 'use strict';
 
 var express = require('express');
@@ -13,7 +15,24 @@ var FileStore = require('session-file-store')(session);
 
 var ip_address = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 var port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 7881;
-var NeonURL = 'http://nu.edu.pk/NeONStudent';
+var NeonURL = 'http://nu.edu.pk/NeONStudent/';
+var DefaultTimeout = 10000;
+var DefaultHeaders = {
+		'Accept'			:'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+		'Accept-Encoding'	:'gzip, deflate',
+		'Accept-Language'	:'en-GB,en;q=0.8,en-US;q=0.6',
+		'Cache-Control'		:'no-cache',
+		'Connection'		:'keep-alive',
+		'DNT'				:'1',
+		'User-Agent'		:'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.106 Safari/537.36',
+		'Pragma'			:'no-cache',
+		'Upgrade-Insecure-Requests'	:'1',
+		'Host'				:'nu.edu.pk',
+		'Origin'			:'http://nu.edu.pk'
+	};
+
+var j = request.jar();
+request = request.defaults({ jar : j });	
 
 var app = express();
 app.use(bodyParser.json()); // to support JSON-encoded bodies
@@ -75,22 +94,26 @@ app.get('/', function(req, res) {
  * @apiSuccess {String} token Unique ID of session, Which is also send in cookie for maintaining session.
  */
 app.get('/load', function(req, res) {
-    // Create Cookie jar	
-    req.session.cookies = request.jar()
-    request = request.defaults({
-        jar: req.session.cookies
-    })
-
-    request({
+	    
+	request({
         url: NeonURL,
-        timeout: 3000
+        timeout: DefaultTimeout,
+		headers: DefaultHeaders
     }, function(error, response, html) {
-
+		req.session.cookies = j.getCookieString(NeonURL);
+		
         if (!error && response.statusCode == 200) {
             var $ = cheerio.load(html);
             req.session.LoginData = {};
-            req.session.LoginData.__EVENTTARGET = $('#__EVENTTARGET').attr('value');
-            req.session.LoginData.__EVENTARGUMENT = $('#__EVENTARGUMENT').attr('value');
+			
+			var eventtarget = $('#__EVENTTARGET').attr('value');
+			if (typeof eventtarget === "undefined") eventtarget = '';
+            req.session.LoginData.__EVENTTARGET = eventtarget;
+			
+			var eventargument =  $('#__EVENTARGUMENT').attr('value');
+			if (typeof eventargument === "undefined") eventargument = '';
+            req.session.LoginData.__EVENTARGUMENT = eventargument;
+				
             req.session.LoginData.__VIEWSTATE = $('#__VIEWSTATE').attr('value');
             req.session.LoginData.__EVENTVALIDATION = $('#__EVENTVALIDATION').attr('value');
             req.session.LoginData.ddlCampus = 'PWR';
@@ -100,8 +123,10 @@ app.get('/load', function(req, res) {
             req.session.LoginData.txtUserCaptcha = '';
             req.session.LoginData.submit = 'Log in';
             req.session.LoginData.login1_ClientState = '';
+			//console.log(req.session.LoginData);
+			console.log(req.session.cookies);
 
-            var captchaImgURI = NeonURL + "/" + $('img[src^=CaptchaImage]').attr('src');
+            var captchaImgURI = NeonURL + $('img[src^=CaptchaImage]').attr('src');
             request({
                 url: captchaImgURI,
                 encoding: null,
@@ -143,6 +168,7 @@ app.get('/load', function(req, res) {
  * @apiError error Reason for failing to login such wrong captcha, credential or server down.
  */
 app.post('/login', function(req, res) {
+	
     console.log("Login POST");
     if (!req.session.LoginData && !req.session.cookies) {
         res.statusCode = 406;
@@ -151,24 +177,28 @@ app.post('/login', function(req, res) {
         });
         return;
     }
-
-    // Get Saved Cookies
-    request = request.defaults({
-        jar: req.session.cookies
-    })
-
+	
+	req.session.cookies = req.session.cookies + ";myCookie=username=" + req.body.username;
+	var cookie = request.cookie(req.session.cookies);
+	j.setCookie(cookie, NeonURL);
+	
     // Get value add in session by Load
-    req.session.LoginData.campus = req.body.campus;
+    req.session.LoginData.ddlCampus = req.body.campus;
     req.session.LoginData.username = req.body.username;
     req.session.LoginData.password = req.body.password;
     req.session.LoginData.txtUserCaptcha = req.body.captcha;
-
-    request.post({
+	//console.log(req.session.cookies);
+			
+	var customHeader = DefaultHeaders;
+	customHeader.Referer = "http://nu.edu.pk/NeonStudent/";
+			
+	request.post({
         url: NeonURL,
-        form: req.session.LoginData,
-        timeout: 10000
+        timeout: DefaultTimeout,
+		headers: customHeader,
+        form: req.session.LoginData
     }, function(error, response, body) {
-        if (!error && response.statusCode == 200) {
+        if (!error && response.statusCode == 302) {
             res.statusCode = 200;
             req.session.LoggedIn = true;
             res.send({
@@ -190,7 +220,7 @@ app.post('/login', function(req, res) {
                 });
             } else {
                 res.send({
-                    error: "Failed to login because server didn't responed in given time. - " + response.statusCode 
+                    error: "NeON behaving awkward - " + response.statusCode + " - " +  body  
                 });
             }
         }
@@ -214,12 +244,14 @@ app.get('/student', function(req, res) {
         return;
     }
 
-    // Get Saved Cookies
-    request = request.defaults({
-        jar: req.session.cookies
-    })
+	var cookie = request.cookie(req.session.cookies);
+	j.setCookie(cookie, NeonURL);
 
-    request(NeonURL + '/ViewStudentProfile.aspx', function(error, response, html) {
+    request({
+        url: NeonURL + 'ViewStudentProfile.aspx',
+        timeout: DefaultTimeout,
+		headers: DefaultHeaders
+    }, function(error, response, html) {
         if (!error) {
             var $ = cheerio.load(html);
             var student = {};
@@ -231,7 +263,7 @@ app.get('/student', function(req, res) {
             student.campus = $('#MainContent_fvPersonal_lblCampus').text();
             student.email = $('#MainContent_fvPersonal_lblEmail').text();
 
-            var ImgURI = NeonURL + "/" + $('#MainContent_fvPersonal_imgStudent').attr('src');
+            var ImgURI = NeonURL + $('#MainContent_fvPersonal_imgStudent').attr('src');
             request({
                 url: ImgURI,
                 encoding: null
@@ -244,7 +276,7 @@ app.get('/student', function(req, res) {
                 } else {
                     res.statusCode = 406;
                     res.send({
-                        error: "Error getting image." + NeonURL + "/" + $('#MainContent_fvPersonal_imgStudent').attr('src')
+                        error: "Error getting image." + NeonURL + $('#MainContent_fvPersonal_imgStudent').attr('src')
                     });
                 }
             });
@@ -288,12 +320,14 @@ app.get('/attendence', function(req, res) {
         return;
     }
 
-    // Get Saved Cookies
-    request = request.defaults({
-        jar: req.session.cookies
-    })
+	var cookie = request.cookie(req.session.cookies);
+	j.setCookie(cookie, NeonURL);
 
-    request(NeonURL + '/Registration/ViewStudentAttendance.aspx', function(error, response, html) {
+    request({
+        url: NeonURL + 'Registration/ViewStudentAttendance.aspx',
+        timeout: DefaultTimeout,
+		headers: DefaultHeaders
+    }, function(error, response, html) {
         if (!error) {
             var $ = cheerio.load(html);
             var json = [];
@@ -353,12 +387,14 @@ app.get('/marks', function(req, res) {
         return;
     }
 
-    // Get Saved Cookies
-    request = request.defaults({
-        jar: req.session.cookies
-    })
+	var cookie = request.cookie(req.session.cookies);
+	j.setCookie(cookie, NeonURL);
 
-    request(NeonURL + '/Registration/StudentMArksEvaluations.aspx', function(error, response, html) {
+    request({
+        url: NeonURL + 'Registration/StudentMArksEvaluations.aspx',
+        timeout: DefaultTimeout,
+		headers: DefaultHeaders
+    }, function(error, response, html) {
         if (!error) {
             var $ = cheerio.load(html);
 			var tableInfo = {};
@@ -415,12 +451,14 @@ app.get('/courses', function(req, res) {
         return;
     }
 
-    // Get Saved Cookies
-    request = request.defaults({
-        jar: req.session.cookies
-    })
+	var cookie = request.cookie(req.session.cookies);
+	j.setCookie(cookie, NeonURL);
 
-    request(NeonURL + '/Registration/StudentREgistration.aspx', function(error, response, html) {
+    request({
+        url: NeonURL + 'Registration/StudentREgistration.aspx',
+        timeout: DefaultTimeout,
+		headers: DefaultHeaders
+    }, function(error, response, html) {
         //request('http://localhost/NeonSample/RegisteredCourse.html', function (error, response, html) {
         if (!error) {
             var $ = cheerio.load(html);
@@ -478,12 +516,14 @@ app.get('/transcript', function(req, res) {
         return;
     }
 
-    // Get Saved Cookies
-    request = request.defaults({
-        jar: req.session.cookies
-    })
+	var cookie = request.cookie(req.session.cookies);
+	j.setCookie(cookie, NeonURL);
 
-    request(NeonURL + '/Registration/StudentTranscript.aspx', function(error, response, html) {
+    request({
+        url: NeonURL + 'Registration/StudentTranscript.aspx',
+        timeout: DefaultTimeout,
+		headers: DefaultHeaders
+    }, function(error, response, html) {
         //request('http://localhost/NeonSample/transcript.html', function (error, response, html) {
         if (!error) {
             jsonResponse = [];
@@ -551,12 +591,14 @@ app.get('/challan', function(req, res) {
         return;
     }
 
-    // Get Saved Cookies
-    request = request.defaults({
-        jar: req.session.cookies
-    })
+	var cookie = request.cookie(req.session.cookies);
+	j.setCookie(cookie, NeonURL);
 
-    request(NeonURL + '/FMS/GenerateChallan.aspx', function(error, response, html) {
+    request({
+        url: NeonURL + 'FMS/GenerateChallan.aspx',
+        timeout: DefaultTimeout,
+		headers: DefaultHeaders
+    }, function(error, response, html) {
         console.log("In courses request");
         if (!error) {
             var $ = cheerio.load(html);
