@@ -420,12 +420,12 @@ app.get('/marks', function(req, res) {
 					});		
 				});
 
-				tableInfo[SubjectName] = subjectMarks;	
+				tableInfo[index] = {name:SubjectName,marks:subjectMarks};	
 			}); 
 			console.log(tableInfo);
 
             res.send({
-                result: JSON.stringify(tableInfo)
+                result: tableInfo
             });
         } else {
 			console.log(html);
