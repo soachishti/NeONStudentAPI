@@ -166,7 +166,7 @@ app.post('/login', function(req, res) {
     request.post({
         url: NeonURL,
         form: req.session.LoginData,
-        timeout: 3000
+        timeout: 10000
     }, function(error, response, body) {
         if (!error && response.statusCode == 302) {
             res.statusCode = 200;

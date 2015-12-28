@@ -695,29 +695,7 @@ function CleanSubject(str) {
 	return null;
 } 
 
-var tableInfo = {};
-$("#MainContent_pnlRegCourses > div > table").each(function(index, item) {
-	var SubjectName = CleanSubject($(item).find('span[id^="MainContent_rptrCourses_lblCourseID"]').text());    
-	var subjectMarks = [];
-	
-    $(item).find('.grid-view').each(function(indexJ, itemJ) {
-		$(itemJ).find('tr.header th').each(function(indexK, itemK) {
-			var markTable = [];
-			$(itemK).find('td').each(function(indexL, itemL) {
-				if (indexL == 1) return;
-				markTable.push($(itemL).text());
-			});
-			subjectMarks.push(markTable);
-		});
-		
-		$(itemJ).find('tr.normal td').each(function(indexM, itemM) {
-			if (indexM == 0) subjectMarks[indexM].push('Yours');
-			else subjectMarks[indexM].push($(itemM).text());
-		});		
-    });
-	subjectMarks = JSON.stringify(subjectMarks, null, 2);
-	tableInfo[SubjectName] = subjectMarks;	
-}); 
+
 console.log(tableInfo);
 
 
