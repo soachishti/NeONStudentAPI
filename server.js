@@ -526,7 +526,7 @@ app.get('/transcript', function(req, res) {
     }, function(error, response, html) {
         //request('http://localhost/NeonSample/transcript.html', function (error, response, html) {
         if (!error) {
-            jsonResponse = [];
+            var jsonResponse = [];
             var $ = cheerio.load(html);
 
             //https://github.com/iaincollins/tabletojson
