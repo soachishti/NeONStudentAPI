@@ -358,7 +358,7 @@ app.get('/attendence', function(req, res) {
             }
 
             res.send({
-                result: JSON.stringify(json, null, 2)
+                result: json
             });
         } else {
             res.statusCode = 406;
@@ -397,7 +397,7 @@ app.get('/marks', function(req, res) {
     }, function(error, response, html) {
         if (!error) {
             var $ = cheerio.load(html);
-			var tableInfo = {};
+			var tableInfo = [];
 			$("#MainContent_pnlRegCourses > div > table").each(function(index, item) {
 				var SubjectName = CleanSubject($(item).find('span[id^="MainContent_rptrCourses_lblCourseID"]').text());    
 				var subjectMarks = [];
@@ -417,7 +417,7 @@ app.get('/marks', function(req, res) {
 						else subjectMarks[indexM].push($(itemM).text());
 					});		
 				});
-				subjectMarks = JSON.stringify(subjectMarks, null, 2);
+				subjectMarks = subjectMarks;
 				tableInfo[SubjectName] = subjectMarks;	
 			}); 
 
@@ -488,7 +488,7 @@ app.get('/courses', function(req, res) {
 
             json.courses = courses;
             res.send({
-                result: JSON.stringify(json, null, 2)
+                result: json
             });
         } else {
             res.statusCode = 406;
@@ -602,7 +602,6 @@ app.get('/challan', function(req, res) {
         console.log("In courses request");
         if (!error) {
             var $ = cheerio.load(html);
-            var json = {};
             var challans = [];
             var headers = [];
             $('#MainContent_gvChallan th').each(function(index, item) {
@@ -616,10 +615,9 @@ app.get('/challan', function(req, res) {
                 console.log(ChalanInfo);
                 challans.push(ChalanInfo);
             })
-            json = challans;
 
             res.send({
-                result: JSON.stringify(json, null, 2)
+                result: challans
             });
         } else {
             res.statusCode = 406;
