@@ -49,6 +49,12 @@ var corsOptions = {
 
 app.use(cors(corsOptions)); // For allowing Ajax to access out API
 
+function CleanSubject(str) {
+	var res = /\s+(.*?)\s+\-/g.exec(str);
+	if (res != null && res != 'undefined') return res[1];
+	return null;
+} 
+
 /**
  * @api {get} / Access Doc
  * @apiName Load Documentation
@@ -294,7 +300,7 @@ app.get('/attendence', function(req, res) {
 
             $("#MainContent_pnlRegCourses > table").each(function(index, item) {
                 var tableInfo = {};
-                tableInfo.title = $(item).find("span").first().text().trim();
+                tableInfo.title = CleanSubject($(item).find("span").first().text().trim());
 
                 var attendence = [];
                 $(item).find('.grid-viewForAttendance > tr:nth-child(2) td').each(function(j, cell) {
@@ -355,27 +361,32 @@ app.get('/marks', function(req, res) {
     request(NeonURL + '/Registration/StudentMArksEvaluations.aspx', function(error, response, html) {
         if (!error) {
             var $ = cheerio.load(html);
-            var json = [];
-
-            $("#MainContent_pnlRegCourses > table").each(function(index, item) {
-                var tableInfo = {};
-                tableInfo.title = $(item).find("span").first().text().trim();
-
-                var marks = [];
-                $(item).find('.grid-view > tr:nth-child(2) td').each(function(j, cell) {
-                    var data = $(cell).text().trim();
-                    if (data) marks.push({
-                        your: data
-                    });
-                });
-
-                tableInfo.marks = marks;
-
-                json.push(tableInfo);
-            });
+			var tableInfo = {};
+			$("#MainContent_pnlRegCourses > div > table").each(function(index, item) {
+				var SubjectName = CleanSubject($(item).find('span[id^="MainContent_rptrCourses_lblCourseID"]').text());    
+				var subjectMarks = [];
+				
+				$(item).find('.grid-view').each(function(indexJ, itemJ) {
+					$(itemJ).find('tr.header th').each(function(indexK, itemK) {
+						var markTable = [];
+						$(itemK).find('td').each(function(indexL, itemL) {
+							if (indexL == 1) return;
+							markTable.push($(itemL).text());
+						});
+						subjectMarks.push(markTable);
+					});
+					
+					$(itemJ).find('tr.normal td').each(function(indexM, itemM) {
+						if (indexM == 0) subjectMarks[indexM].push('Yours');
+						else subjectMarks[indexM].push($(itemM).text());
+					});		
+				});
+				subjectMarks = JSON.stringify(subjectMarks, null, 2);
+				tableInfo[SubjectName] = subjectMarks;	
+			}); 
 
             res.send({
-                result: JSON.stringify(json, null, 2)
+                result: tableInfo
             });
         } else {
             res.statusCode = 406;
