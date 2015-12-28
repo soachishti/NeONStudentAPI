@@ -13,7 +13,7 @@ var FileStore = require('session-file-store')(session);
 
 var ip_address = process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1";
 var port = process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 7881;
-var NeonURL = 'http://nu.edu.pk/NeONStudent/';
+var NeonURL = 'http://nu.edu.pk/NeONStudent';
 
 var app = express();
 app.use(bodyParser.json()); // to support JSON-encoded bodies
@@ -231,7 +231,7 @@ app.get('/student', function(req, res) {
             student.campus = $('#MainContent_fvPersonal_lblCampus').text();
             student.email = $('#MainContent_fvPersonal_lblEmail').text();
 
-            var ImgURI = NeonURL + $('#MainContent_fvPersonal_imgStudent').attr('src');
+            var ImgURI = NeonURL + "/" + $('#MainContent_fvPersonal_imgStudent').attr('src');
             request({
                 url: ImgURI,
                 encoding: null
@@ -244,7 +244,7 @@ app.get('/student', function(req, res) {
                 } else {
                     res.statusCode = 406;
                     res.send({
-                        error: "Error getting image."
+                        error: "Error getting image." + NeonURL + "/" + $('#MainContent_fvPersonal_imgStudent').attr('src')
                     });
                 }
             });
