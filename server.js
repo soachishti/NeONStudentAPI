@@ -1,5 +1,6 @@
 ﻿//http://www.w3schools.com/jsref/jsref_match.asp
 //id=MainContent_lblerror
+// Return JSON {} no []
 
 'use strict';
 
@@ -269,7 +270,8 @@ app.get('/student', function(req, res) {
                 encoding: null
             }, function(error, response, data) {
                 if (!error && response.statusCode == 200) {
-                    student.img = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
+                    //student.img = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
+                    student.img = 'data:image/jpeg;base64,' + data.toString('base64');
                     res.send({
                         result: student
                     });
@@ -397,9 +399,9 @@ app.get('/marks', function(req, res) {
     }, function(error, response, html) {
         if (!error) {
             var $ = cheerio.load(html);
-			var tableInfo = [];
-			$("#MainContent_pnlRegCourses > div > table").each(function(index, item) {
-				var SubjectName = CleanSubject($(item).find('span[id^="MainContent_rptrCourses_lblCourseID"]').text());    
+			var tableInfo = {};
+			$("div#MainContent_pnlRegCourses").children().each(function(index, item) {
+				var SubjectName = CleanSubject($(item).find('span[id^="MainContent_rptrCourses_lblCourseID"]').text());   
 				var subjectMarks = [];
 				
 				$(item).find('.grid-view').each(function(indexJ, itemJ) {
@@ -417,14 +419,16 @@ app.get('/marks', function(req, res) {
 						else subjectMarks[indexM].push($(itemM).text());
 					});		
 				});
-				subjectMarks = subjectMarks;
+
 				tableInfo[SubjectName] = subjectMarks;	
 			}); 
+			console.log(tableInfo);
 
             res.send({
-                result: tableInfo
+                result: JSON.stringify(tableInfo)
             });
         } else {
+			console.log(html);
             res.statusCode = 406;
             res.send({
                 error: "Fail to get data."
