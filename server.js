@@ -101,7 +101,7 @@ app.get('/load', function(req, res) {
             req.session.LoginData.submit = 'Log in';
             req.session.LoginData.login1_ClientState = '';
 
-            var captchaImgURI = NeonURL + $('img[src^=CaptchaImage]').attr('src');
+            var captchaImgURI = NeonURL + "/" + $('img[src^=CaptchaImage]').attr('src');
             request({
                 url: captchaImgURI,
                 encoding: null,
