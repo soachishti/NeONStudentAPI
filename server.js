@@ -85,11 +85,16 @@ function LoginCheck(req, callback) {
 	else {
 		request({
 				url: url,
-				method: 'GET',
-				timeout: 10000,
-				headers: DefaultTimeout,
+				timeout: DefaultTimeout,
+				headers: DefaultHeaders,
 				followRedirect : false
 			}, function (error, response, body) {
+				if (error) {
+					console.log(response);
+					callback(false);
+					return;
+				}
+
 				if(typeof response.headers !== 'undefined' && response.headers['location']) {
 					// Redirect Found
 					callback(false);
