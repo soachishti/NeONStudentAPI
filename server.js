@@ -77,20 +77,19 @@ function CleanSubject(str) {
 
 function LoginCheck(req, callback) {
 	var url = 'http://nu.edu.pk/NeONStudent/Registration/ViewStudentAttendance.aspx';
-	var options = {
-		url: url,
-		method: 'HEAD',
-		timeout: 10000,
-		headers: DefaultTimeout,
-		followRedirect : false
-	};	
 	
 	if (!req.session.cookies) {
         callback(false);
         return;
     }
 	else {
-		request(options, function (error, response, body) {
+		request({
+				url: url,
+				method: 'GET',
+				timeout: 10000,
+				headers: DefaultTimeout,
+				followRedirect : false
+			}, function (error, response, body) {
 				if(typeof response.headers !== 'undefined' && response.headers['location']) {
 					// Redirect Found
 					callback(false);
