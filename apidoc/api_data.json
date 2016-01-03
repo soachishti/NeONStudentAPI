@@ -94,6 +94,29 @@
   },
   {
     "type": "get",
+    "url": "/keepalive",
+    "title": "Keep NeON session alive for more whatever NeON timeout",
+    "name": "NeON_Session_Alive",
+    "group": "Info",
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "Return",
+            "description": "<p>error or result</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "./server.js",
+    "groupTitle": "Info"
+  },
+  {
+    "type": "get",
     "url": "/courses",
     "title": "Courses",
     "name": "Student_All_Courses",

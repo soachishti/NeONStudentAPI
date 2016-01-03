@@ -119,6 +119,45 @@ app.get('/', function(req, res) {
 });
 
 /**
+ * @api {get} /keepalive Keep NeON session alive for more whatever NeON timeout
+ * @apiName NeON Session Alive
+ * @apiGroup Info
+ *
+ * @apiSuccess {String} Return error or result
+ */
+app.get('/keepalive', function(req, res) {
+    LoginCheck(req, function(status) {
+		if (status == false) {
+			res.statusCode = 406;
+			res.send({
+				error: "Login first"
+			});
+			return;
+		}
+
+		var cookie = request.cookie(req.session.cookies);
+		j.setCookie(cookie, NeonURL);
+
+		request({
+			url: NeonURL + 'ViewStudentProfile.aspx',
+			timeout: DefaultTimeout,
+			headers: DefaultHeaders
+		}, function(error, response, html) {
+			if (!error) {
+				res.send({
+					result: "success"
+				});
+			} else {
+				res.statusCode = 406;
+				res.send({
+					error: "Failed."
+				});
+			}
+		})
+    });
+});
+
+/**
  * @api {get} /load Initialize Session
  * @apiName Load NeON Session
  * @apiGroup Login
@@ -511,7 +550,6 @@ app.get('/courses', function(req, res) {
 			timeout: DefaultTimeout,
 			headers: DefaultHeaders
 		}, function(error, response, html) {
-			//request('http://localhost/NeonSample/RegisteredCourse.html', function (error, response, html) {
 			if (!error) {
 				var $ = cheerio.load(html);
 				var json = {};
