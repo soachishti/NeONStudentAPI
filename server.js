@@ -130,7 +130,7 @@ app.get('/keepalive', function(req, res) {
 		if (status == false) {
 			res.statusCode = 406;
 			res.send({
-				error: "Login first"
+				error: "Session expired, Login again."
 			});
 			return;
 		}
@@ -244,7 +244,7 @@ app.post('/login', function(req, res) {
 	if (!req.session.LoginData) {
 		res.statusCode = 406;
 		res.send({
-			error: "Login first"
+			error: "Session expired, Login again."
 		});
 		return;
 	}
@@ -314,7 +314,7 @@ app.get('/student', function(req, res) {
 		if (status == false) {
 			res.statusCode = 406;
 			res.send({
-				error: "Login first"
+				error: "Session expired, Login again."
 			});
 			return;
 		}
@@ -405,7 +405,7 @@ app.get('/attendence', function(req, res) {
 		if (status == false) {
 			res.statusCode = 406;
 			res.send({
-				error: "Login first"
+				error: "Session expired, Login again."
 			});
 			return;
 		}
@@ -472,7 +472,7 @@ app.get('/marks', function(req, res) {
 		if (status == false) {
 			res.statusCode = 406;
 			res.send({
-				error: "Login first"
+				error: "Session expired, Login again."
 			});
 			return;
 		}
@@ -537,7 +537,7 @@ app.get('/courses', function(req, res) {
 		if (status == false) {
 			res.statusCode = 406;
 			res.send({
-				error: "Login first"
+				error: "Session expired, Login again."
 			});
 			return;
 		}
@@ -603,7 +603,7 @@ app.get('/transcript', function(req, res) {
 		if (status == false) {
 			res.statusCode = 406;
 			res.send({
-				error: "Login first"
+				error: "Session expired, Login again."
 			});
 			return;
 		}
@@ -680,7 +680,7 @@ app.get('/challan', function(req, res) {
 		if (status == false) {
 			res.statusCode = 406;
 			res.send({
-				error: "Login first"
+				error: "Session expired, Login again."
 			});
 			return;
 		}
