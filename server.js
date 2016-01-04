@@ -32,9 +32,6 @@ var DefaultHeaders = {
 		'Origin'			:'http://nu.edu.pk'
 	};
 
-var j = request.jar();
-request = request.defaults({ jar : j });	
-
 var app = express();
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({
@@ -50,7 +47,7 @@ var session_option = {
     secret: 'oRsZmO1LwIyx563DC1V3',
     resave: true,
     saveUninitialized: true,
-    cookie: {},
+    cookie: { path: '/', httpOnly: true, secure: false, maxAge: null },
     store: new FileStore({
         path: "./BiskutStore",
         encrypt: true
@@ -61,7 +58,7 @@ app.use(session(session_option));
 
 var corsOptions = {
     origin: true,
-    methods: ['POST'],
+    methods: ['POST', 'GET'],
     credentials: true,
     maxAge: 3600
 };
@@ -199,7 +196,7 @@ app.get('/load', function(req, res) {
             request({
                 url: captchaImgURI,
                 encoding: null,
-                timeout: 3000
+                timeout: DefaultTimeout
             }, function(error, response, data) {
                 if (!error && response.statusCode == 200) {
                     var captchaImgData = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
@@ -249,8 +246,11 @@ app.post('/login', function(req, res) {
 	}
 	
 	req.session.cookies = req.session.cookies + ";myCookie=username=" + req.body.username;
+	
 	var cookie = request.cookie(req.session.cookies);
+	var j = request.jar();
 	j.setCookie(cookie, NeonURL);
+	request = request.defaults({ jar : j });
 	
 	// Get value add in session by Load
 	req.session.LoginData.ddlCampus = req.body.campus;
@@ -319,12 +319,14 @@ app.get('/student', function(req, res) {
 		}
 
 		var cookie = request.cookie(req.session.cookies);
+		var j = request.jar();
 		j.setCookie(cookie, NeonURL);
 
 		request({
-			url: NeonURL + 'ViewStudentProfile.aspx',
-			timeout: DefaultTimeout,
-			headers: DefaultHeaders
+			url		: NeonURL + 'ViewStudentProfile.aspx',
+			timeout	: DefaultTimeout,
+			headers	: DefaultHeaders,
+			jar		: j
 		}, function(error, response, html) {
 			if (!error) {
 				var $ = cheerio.load(html);
@@ -374,12 +376,14 @@ app.get('/student', function(req, res) {
  */
 app.get('/logout', function(req, res) {	
 	var cookie = request.cookie(req.session.cookies);
+	var j = request.jar();
 	j.setCookie(cookie, NeonURL);
-	
+
 	request({
-        url: NeonURL + 'logout.aspx',
-        timeout: DefaultTimeout,
-		headers: DefaultHeaders
+        url		: NeonURL + 'logout.aspx',
+        timeout	: DefaultTimeout,
+		headers	: DefaultHeaders,
+		jar		: j
     }, function(error, response, html) {
 		req.session.destroy();
 
@@ -410,12 +414,14 @@ app.get('/attendence', function(req, res) {
 		}
 
 		var cookie = request.cookie(req.session.cookies);
+		var j = request.jar();
 		j.setCookie(cookie, NeonURL);
 
 		request({
-			url: NeonURL + 'Registration/ViewStudentAttendance.aspx',
-			timeout: DefaultTimeout,
-			headers: DefaultHeaders
+			url		: NeonURL + 'Registration/ViewStudentAttendance.aspx',
+			timeout	: DefaultTimeout,
+			headers	: DefaultHeaders,
+			jar		: j
 		}, function(error, response, html) {
 			if (!error) {
 				var $ = cheerio.load(html);
@@ -475,14 +481,16 @@ app.get('/marks', function(req, res) {
 			});
 			return;
 		}
-
+		
 		var cookie = request.cookie(req.session.cookies);
+		var j = request.jar();
 		j.setCookie(cookie, NeonURL);
-
+		
 		request({
-			url: NeonURL + 'Registration/StudentMArksEvaluations.aspx',
-			timeout: DefaultTimeout,
-			headers: DefaultHeaders
+			url		: NeonURL + 'Registration/StudentMArksEvaluations.aspx',
+			timeout	: DefaultTimeout,
+			headers	: DefaultHeaders,
+			jar		: j
 		}, function(error, response, html) {
 			if (!error) {
 				var $ = cheerio.load(html);
@@ -542,12 +550,14 @@ app.get('/courses', function(req, res) {
 		}
 
 		var cookie = request.cookie(req.session.cookies);
+		var j = request.jar();
 		j.setCookie(cookie, NeonURL);
-
+		
 		request({
-			url: NeonURL + 'Registration/StudentREgistration.aspx',
-			timeout: DefaultTimeout,
-			headers: DefaultHeaders
+			url		: NeonURL + 'Registration/StudentREgistration.aspx',
+			timeout	: DefaultTimeout,
+			headers	: DefaultHeaders,
+			jar		: j
 		}, function(error, response, html) {
 			if (!error) {
 				var $ = cheerio.load(html);
@@ -608,12 +618,14 @@ app.get('/transcript', function(req, res) {
 		}
 
 		var cookie = request.cookie(req.session.cookies);
+		var j = request.jar();
 		j.setCookie(cookie, NeonURL);
-
+		
 		request({
-			url: NeonURL + 'Registration/StudentTranscript.aspx',
-			timeout: DefaultTimeout,
-			headers: DefaultHeaders
+			url		: NeonURL + 'Registration/StudentTranscript.aspx',
+			timeout : DefaultTimeout,
+			headers : DefaultHeaders,
+			jar		: j
 		}, function(error, response, html) {
 			//request('http://localhost/NeonSample/transcript.html', function (error, response, html) {
 			if (!error) {
@@ -685,12 +697,14 @@ app.get('/challan', function(req, res) {
 		}
 
 		var cookie = request.cookie(req.session.cookies);
+		var j = request.jar();
 		j.setCookie(cookie, NeonURL);
-
+		
 		request({
-			url: NeonURL + 'FMS/GenerateChallan.aspx',
-			timeout: DefaultTimeout,
-			headers: DefaultHeaders
+			url		: NeonURL + 'FMS/GenerateChallan.aspx',
+			timeout	: DefaultTimeout,
+			headers	: DefaultHeaders,
+			jar		: j
 		}, function(error, response, html) {
 			console.log("In courses request");
 			if (!error) {
