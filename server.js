@@ -47,7 +47,7 @@ var session_option = {
     secret: 'oRsZmO1LwIyx563DC1V3',
     resave: true,
     saveUninitialized: true,
-    cookie: { path: '/', httpOnly: true, secure: true, maxAge: 2*24*60*60*1000 }, //2 days
+    cookie: { path: '/', httpOnly: true, secure: true, maxAge: null}, //2 days
     store: new FileStore({
         path: "./BiskutStore",
         encrypt: true
