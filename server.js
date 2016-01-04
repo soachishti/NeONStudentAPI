@@ -50,12 +50,11 @@ var session_option = {
     secret: 'oRsZmO1LwIyx563DC1V3',
     resave: true,
     saveUninitialized: true,
-    cookie: false,
+    cookie: true,
     store: new FileStore({
         path: "./BiskutStore",
         encrypt: true
     }),
-    //store: new SQLiteStore({db:"BiskutStore", table:"Biskuts"})
 };
 
 app.use(session(session_option));
