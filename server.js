@@ -162,11 +162,12 @@ app.get('/keepalive', function(req, res) {
  * @apiSuccess {String} token Unique ID of session, Which is also send in cookie for maintaining session.
  */
 app.get('/load', function(req, res) {
-	    
+	var j = request.jar();
 	request({
-        url: NeonURL,
-        timeout: DefaultTimeout,
-		headers: DefaultHeaders
+        url		: NeonURL,
+        timeout	: DefaultTimeout,
+		headers	: DefaultHeaders,
+		jar		: j
     }, function(error, response, html) {
 		req.session.cookies = j.getCookieString(NeonURL);
 		
