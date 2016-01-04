@@ -77,6 +77,10 @@ function LoginCheck(req, callback) {
         callback(false);
         return;
     }
+	else if (req.session.LoggedIn != true) {
+		callback(false);
+        return;
+	}
 	else {
 		request({
 				url: url,
