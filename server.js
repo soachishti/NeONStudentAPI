@@ -61,7 +61,7 @@ var db = new sqlite3.Database("data.db");
 db.serialize(function() {
 	db.run(
 		"CREATE TABLE IF NOT EXISTS UserData(			" + 
-		"	ID INT PRIMARY KEY     		NOT NULL,	" +
+		"	id INTEGER PRIMARY KEY   AUTOINCREMENT,	" +
 		"	key           CHAR(50)    	NOT NULL,	" +
 		"	value         TEXT						" +
 		");											" 
