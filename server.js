@@ -55,6 +55,36 @@ var session_option = {
 
 app.use(session(session_option));
 
+var sqlite3 = require('sqlite3').verbose();
+var db = new sqlite3.Database("data.db");
+ 
+db.serialize(function() {
+	db.run(
+		CREATE TABLE NOT EXISTS UserData(
+			ID INT PRIMARY KEY     		NOT NULL,
+			key           CHAR(50)    	NOT NULL,
+			value         TEXT
+		);
+	);
+});
+
+function CreateUser() {
+	var id = uuid.v1();
+	db.run("INSERT INTO UserData ('key','value') VALUES ($key, $value)", {
+        $key: id,
+        $value: ''
+    });
+	return id;
+}
+ 
+function UpdateUser(key, value) {
+	db.run("UPDATE UserData SET value = $value WHERE key = $key", {
+        $key: key,
+        $name: value
+    });
+} 
+//db.close();
+
 var corsOptions = {
     origin: true,
     methods: ['POST', 'GET'],
