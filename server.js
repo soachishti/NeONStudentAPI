@@ -60,7 +60,7 @@ var db = new sqlite3.Database("data.db");
  
 db.serialize(function() {
 	db.run(
-		"CREATE TABLE NOT EXISTS UserData(			" + 
+		"CREATE TABLE IF NOT EXISTS UserData(			" + 
 		"	ID INT PRIMARY KEY     		NOT NULL,	" +
 		"	key           CHAR(50)    	NOT NULL,	" +
 		"	value         TEXT						" +
@@ -76,6 +76,18 @@ function CreateUser() {
     });
 	return id;
 }
+
+function GetUser(key, callback) {
+	db.get("SELECT value FROM UserData WHERE key = $key", {
+        $key: key,
+        $name: value
+    }, function(err, row) {
+		if (typeof row == 'undefined') {
+			return callback(row.value);
+		}
+		return callback(null);
+	});
+} 
  
 function UpdateUser(key, value) {
 	db.run("UPDATE UserData SET value = $value WHERE key = $key", {
