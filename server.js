@@ -59,13 +59,13 @@ var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database("data.db");
  
 db.serialize(function() {
-	db.run(`
-		CREATE TABLE NOT EXISTS UserData(
-			ID INT PRIMARY KEY     		NOT NULL,
-			key           CHAR(50)    	NOT NULL,
-			value         TEXT
-		);
-	`);
+	db.run("
+		CREATE TABLE NOT EXISTS UserData(			\
+			ID INT PRIMARY KEY     		NOT NULL,	\
+			key           CHAR(50)    	NOT NULL,	\
+			value         TEXT						\	
+		);											\
+	");
 });
 
 function CreateUser() {
