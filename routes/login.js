@@ -14,7 +14,7 @@ module.exports = function(app, request, cheerio) {
      */
     app.post('/login', function(req, res) {
         console.log("Login POST");
-        global.LoginCheck(req, res, loginCallback, true);
+        global.LoginCheck(req, res, request, loginCallback, true);
     })
 		
 	function loginCallback(req, res, store) {
@@ -26,7 +26,7 @@ module.exports = function(app, request, cheerio) {
 		request = request.defaults({
 			jar: j
 		});
-
+		
 		// Get value add in session by Load
 		store.LoginData.ddlCampus = req.body.campus;
 		store.LoginData.username = req.body.username;

@@ -1,4 +1,4 @@
-module.exports = function (req, res, callback, isLoginCheck){
+module.exports = function (req, res, request, callback, isLoginCheck){
 	if (isLoginCheck != true) isLoginCheck = false;
 	var token = req.query.token;
 	if (!token) {
