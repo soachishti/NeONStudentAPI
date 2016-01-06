@@ -8,18 +8,15 @@
     "cheerio"         		: "^0.19.0",
     "cors"            		: "^2.7.1",
     "express"         		: "^4.13.3",
-    "express-session" 		: "latest",
     "request"         		: "^2.67.0",
     "node-uuid"       		: "latest",
-	"session-file-store"	: "latest",
-	"sqlite3"	 			: "latest"
-  },
+	"sqlite3"	 			: "latest",  },
   "description" : "NeON Student for Mobile - API",
-  "main"        : "server.js",
+  "main"        : "app.js",
   "name"        : "NeONStudentMobileAPI",
   "version"     : "0.0.1",
   "scripts": {
-    "start": "node server.js"
+    "start": "node app.js"
   },
-  "main": "server.js"
+  "main": "app.js"
 }

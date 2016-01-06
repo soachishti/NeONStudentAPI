@@ -1,1 +1,1 @@
-apidoc -f server.js -o apidoc/
+apidoc -f routes/ -o apidoc/
