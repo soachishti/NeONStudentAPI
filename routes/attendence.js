@@ -30,7 +30,7 @@ module.exports = function (app, request, cheerio) {
 					if (error) {
 						res.statusCode = 406;
 						res.send({
-							error: error.text();
+							error: error.text()
 						});
 						return;
 					}
