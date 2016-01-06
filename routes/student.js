@@ -50,7 +50,8 @@ module.exports = function (app, request, cheerio, db) {
 						encoding: null
 					}, function(error, response, data) {
 						if (!error && response.statusCode == 200) {
-							student.img = 'data:image/jpeg;base64,' + data.toString('base64');
+							//student.img = 'data:image/jpeg;base64,' + data.toString('base64');
+							student.img = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
 							res.send({
 								result: student
 							});
