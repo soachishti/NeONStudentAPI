@@ -3,3 +3,5 @@ BiskutStore.db
 /NeONAPITest
 /node_modules
 test.php
+.data.db
+.data.db-journal
