@@ -24,6 +24,16 @@ module.exports = function (app, request, cheerio) {
 			}, function(error, response, html) {
 				if (!error) {
 					var $ = cheerio.load(html);
+										
+					var error = $("#MainContent_lblNoReg");
+					if (error) {
+						res.statusCode = 406;
+						res.send({
+							error: error.text();
+						});
+						return;
+					}
+					
 					var json = {};
 					json.cgpa = $('#MainContent_lblCGPA').text();
 					json.CreditEarned = $('#MainContent_lblCrErn').text();

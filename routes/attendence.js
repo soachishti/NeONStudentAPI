@@ -26,6 +26,17 @@ module.exports = function (app, request, cheerio) {
 					var $ = cheerio.load(html);
 					var json = [];
 
+					var error = $("#MainContent_lblNoReg");
+					if (error) {
+						res.statusCode = 406;
+						res.send({
+							error: error.text();
+						});
+						return;
+					}
+					
+					
+					
 					$("#MainContent_pnlRegCourses > table").each(function(index, item) {
 						var tableInfo = {};
 						tableInfo.title = CleanSubject($(item).find("span").first().text().trim());

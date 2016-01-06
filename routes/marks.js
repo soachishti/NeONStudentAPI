@@ -24,6 +24,16 @@ module.exports = function (app, request, cheerio) {
 			}, function(error, response, html) {
 				if (!error) {
 					var $ = cheerio.load(html);
+					
+					var error = $("#MainContent_lblNoReg");
+					if (error) {
+						res.statusCode = 406;
+						res.send({
+							error: error.text();
+						});
+						return;
+					}
+					
 					var tableInfo = {};
 					$("div#MainContent_pnlRegCourses").children().each(function(index, item) {
 						var SubjectName = CleanSubject($(item).find('span[id^="MainContent_rptrCourses_lblCourseID"]').text());   
