@@ -31,7 +31,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "./routes/attendence.js",
     "groupTitle": "Info"
   },
   {
@@ -66,7 +66,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "./routes/student.js",
     "groupTitle": "Info"
   },
   {
@@ -89,7 +89,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "./routes/index.js",
     "groupTitle": "Info"
   },
   {
@@ -112,7 +112,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "./routes/keepalive.js",
     "groupTitle": "Info"
   },
   {
@@ -147,7 +147,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "./routes/courses.js",
     "groupTitle": "Info"
   },
   {
@@ -182,7 +182,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "./routes/challan.js",
     "groupTitle": "Info"
   },
   {
@@ -217,7 +217,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "./routes/marks.js",
     "groupTitle": "Info"
   },
   {
@@ -252,7 +252,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "./routes/transcript.js",
     "groupTitle": "Info"
   },
   {
@@ -282,7 +282,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "./routes/load.js",
     "groupTitle": "Login"
   },
   {
@@ -351,7 +351,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "./routes/login.js",
     "groupTitle": "Login"
   },
   {
@@ -374,7 +374,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "./server.js",
+    "filename": "./routes/logout.js",
     "groupTitle": "Option"
   }
 ] });

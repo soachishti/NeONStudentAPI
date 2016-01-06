@@ -1,4 +1,5 @@
 BiskutStore.db
 BiskutStore
 NeONAPITest\
+node_modules\
 test.php
