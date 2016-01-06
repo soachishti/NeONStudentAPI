@@ -1,3 +1,11 @@
+function ucwords(str) {
+  str = str.toLowerCase();
+  return (str + '')
+    .replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1) {
+      return $1.toUpperCase();
+    });
+}
+
 module.exports = function (app, request, cheerio, db) {
 	/**
 	 * @api {get} /student Student
@@ -36,8 +44,8 @@ module.exports = function (app, request, cheerio, db) {
 				if (!error) {
 					var $ = cheerio.load(html);
 					var student = {};
-					student.fullname = $('#MainContent_fvPersonal_lblName').text();
-					student.name = student.fullname.split(" ")[0];
+					student.fullname = ucwords($('#MainContent_fvPersonal_lblName').text());
+					student.name = ucwords(student.fullname.split(" ")[0]);
 					student.rollno = $('#MainContent_fvPersonal_lblRollno').text();
 					student.degree = $('#MainContent_fvPersonal_lblDegree').text();
 					student.batch = $('#MainContent_fvPersonal_lblBatch').text();
