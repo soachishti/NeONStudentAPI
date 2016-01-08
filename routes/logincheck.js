@@ -11,12 +11,13 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 
 	global.db.GetUser(token, function (store) {
 		if (store != null) {
-			if (store.cookies && store.LoginData && isLoginCheck) 
+			console.log(store);
+			if (store.cookies && store.LoginData != null && isLoginCheck == true) 
 			{
 				// Checking if user have logged in on /load
 				callback(req, res, store);
 			}
-			else if (store.cookies && store.LoggedIn) {		
+			else if (store.cookies && store.LoggedIn == 'true') {		
 				var url = 'http://nu.edu.pk/NeONStudent/Registration/ViewStudentAttendance.aspx';
 				var j = request.jar();
 				var cookie = request.cookie(store.cookies);
