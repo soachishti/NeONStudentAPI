@@ -32,7 +32,7 @@ module.exports = function (app, request, cheerio) {
 					json.CurrentCredit = $('#MainContent_lblCredits').text();
 					json.warning = $('#MainContent_lblWarning').text();
 
-					var error = $("#MainContent_lblMessage");
+					var error = $("#MainContent_lblNoReg");
 					if (error && error.text()) {
 						//res.statusCode = 406;
 						res.send({
