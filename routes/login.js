@@ -29,7 +29,8 @@ module.exports = function(app, request, cheerio) {
 		
 		var allowed = {
 			'146011' : 'PWR', 
-			'156011' : 'KHI', 
+			'146016' : 'PWR', 
+			'152173' : 'KHI' 
 		};
 		
 		if (allowed[req.body.username] != req.body.campus) {
