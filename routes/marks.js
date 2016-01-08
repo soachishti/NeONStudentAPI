@@ -26,7 +26,7 @@ module.exports = function (app, request, cheerio) {
 					var $ = cheerio.load(html);
 					
 					var error = $("#MainContent_lblNoReg");
-					if (error) {
+					if (error && error.text()) {
 						res.send({
 							error: error.text()
 						});

@@ -33,7 +33,7 @@ module.exports = function (app, request, cheerio) {
 					json.warning = $('#MainContent_lblWarning').text();
 
 					var error = $("#MainContent_lblMessage");
-					if (error) {
+					if (error && error.text()) {
 						//res.statusCode = 406;
 						res.send({
 							error: error.text(),
