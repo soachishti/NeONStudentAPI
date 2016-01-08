@@ -28,7 +28,6 @@ module.exports = function (app, request, cheerio) {
 
 					var error = $("#MainContent_lblNoReg");
 					if (error) {
-						res.statusCode = 406;
 						res.send({
 							error: error.text()
 						});
