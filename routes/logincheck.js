@@ -11,8 +11,9 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 
 	global.db.GetUser(token, function (store) {
 		if (store != null) {
-			if (store.cookies && isLoginCheck) 
+			if (store.cookies && store.LoginData && isLoginCheck) 
 			{
+				// Checking if user have logged in on /load
 				callback(req, res, store);
 			}
 			else if (store.cookies && store.LoggedIn) {		

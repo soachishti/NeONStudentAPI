@@ -15,14 +15,15 @@ module.exports = function (app, request, cheerio, db) {
 		var cookie = request.cookie(store.cookies);
 		var j = request.jar();
 		j.setCookie(cookie, global.setting.NeonURL);
-
+		var token = req.query.token;
 		request({
 			url		: global.setting.NeonURL + 'logout.aspx',
 			timeout	: global.setting.DefaultTimeout,
 			headers	: global.setting.DefaultHeaders,
 			jar		: j
 		}, function(error, response, html) {
-			store.destroy();
+			store = {};
+			global.db.UpdateUser(token, store);
 
 			res.send({
 				result: "Have a good day!"
