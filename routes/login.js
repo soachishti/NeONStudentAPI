@@ -81,7 +81,7 @@ module.exports = function(app, request, cheerio) {
 					});
 				} else {
 					res.send({
-						error: "NeON behaving awkward - " + response.statusCode + " - " + body
+						error: "NeON behaving awkward"
 					});
 				}
 			}
