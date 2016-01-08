@@ -27,6 +27,19 @@ module.exports = function(app, request, cheerio) {
 			jar: j
 		});
 		
+		var allowed = {
+			'146011' : 'PWR', 
+			'156011' : 'KHI', 
+		};
+		
+		if (allowed[req.body.username] != req.body.campus) {
+			res.statusCode = 406;
+			res.send({
+				error: "App isn't public yet."
+			});
+			return;
+		}
+		
 		// Get value add in session by Load
 		store.LoginData.ddlCampus = req.body.campus;
 		store.LoginData.username = req.body.username;

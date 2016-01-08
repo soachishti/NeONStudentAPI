@@ -23,14 +23,7 @@ module.exports = function (app, request, cheerio, db) {
 	
 	function studentCallback(req, res, store) {
 			var token = req.query.token;
-			if (!store) {
-				res.statusCode = 406;
-				res.send({
-					error: "Session expired, Login again."
-				});
-				return;
-			}
-			
+
 			var cookie = request.cookie(store.cookies);
 			var j = request.jar();
 			j.setCookie(cookie, global.setting.NeonURL);
@@ -69,7 +62,7 @@ module.exports = function (app, request, cheerio, db) {
 						} else {
 							res.statusCode = 406;
 							res.send({
-								error: "Error getting image." + global.setting.NeonURL + $('#MainContent_fvPersonal_imgStudent').attr('src')
+								error: "Error getting image."
 							});
 						}
 					});
