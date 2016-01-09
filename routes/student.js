@@ -59,7 +59,6 @@ module.exports = function (app, request, cheerio, db) {
 								result: student
 							});
 						} else {
-							res.statusCode = 406;
 							res.send({
 								result: student,
 								error: "Error getting image."
