@@ -8,7 +8,7 @@ module.exports = function (app, request, cheerio) {
 	 * @apiError error Reason for failing to get data.
 	 */
 	app.get('/attendence', function(req, res) {
-        global.LoginCheck(req, res, request,  attendenceCallback, false);
+        global.LoginCheck(req, res, request,  attendenceCallback, 0);
 	})
 
 	function attendenceCallback(req, res, store) {

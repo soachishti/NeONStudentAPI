@@ -7,7 +7,7 @@ module.exports = function (app, request, cheerio, db) {
 	 * @apiSuccess {String} Return error or result
 	 */
 	app.get('/keepalive', function(req, res) {
-        global.LoginCheck(req, res, request,  keepaliveCallback, false);
+        global.LoginCheck(req, res, request,  keepaliveCallback, 0);
 	});
 	
 	function keepaliveCallback(req, res, store) {

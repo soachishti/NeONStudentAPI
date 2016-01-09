@@ -14,7 +14,7 @@ module.exports = function(app, request, cheerio) {
      */
     app.post('/login', function(req, res) {
         console.log("Login POST");
-        global.LoginCheck(req, res, request, loginCallback, true);
+        global.LoginCheck(req, res, request, loginCallback, 1);
     })
 		
 	function loginCallback(req, res, store) {

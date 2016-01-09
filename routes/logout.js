@@ -7,7 +7,7 @@ module.exports = function (app, request, cheerio, db) {
 	 * @apiSuccess {String} message "Have a good day!" and Delete all session data
 	 */
 	app.get('/logout', function(req, res) {
-        global.LoginCheck(req, res, request,  logoutCallback, false);
+        global.LoginCheck(req, res, request,  logoutCallback, -1);
 	})
 
 	

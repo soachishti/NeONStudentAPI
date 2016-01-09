@@ -17,7 +17,7 @@ module.exports = function (app, request, cheerio, db) {
 	 */
 	app.get('/student', function(req, res) {
 		console.log("student GET");
-        global.LoginCheck(req, res, request,  studentCallback, true);
+        global.LoginCheck(req, res, request,  studentCallback, 0);
 	})
 
 	
@@ -55,13 +55,13 @@ module.exports = function (app, request, cheerio, db) {
 					}, function(error, response, data) {
 						if (!error && response.statusCode == 200) {
 							student.img = 'data:image/jpeg;base64,' + data.toString('base64');
-							//student.img = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
 							res.send({
 								result: student
 							});
 						} else {
 							res.statusCode = 406;
 							res.send({
+								result: student,
 								error: "Error getting image."
 							});
 						}

@@ -1,5 +1,5 @@
 module.exports = function (req, res, request, callback, isLoginCheck){
-	if (isLoginCheck != true) isLoginCheck = false;
+	if (isLoginCheck != 1) isLoginCheck = 0;
 	var token = req.query.token;
 	if (!token) {
 		res.statusCode = 406;
@@ -12,7 +12,12 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 	global.db.GetUser(token, function (store) {
 		if (store != null) {
 			console.log(store);
-			if (store.cookies && store.LoginData && isLoginCheck == true) 
+			if (store.cookies && store.LoginData && isLoginCheck == 1) 
+			{
+				// Checking if user have logged in on /load
+				callback(req, res, store);
+			}
+			else if (store.cookies && isLoginCheck == -1) 
 			{
 				// Checking if user have logged in on /load
 				callback(req, res, store);
