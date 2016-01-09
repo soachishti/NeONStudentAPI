@@ -9,6 +9,7 @@ app.use(bodyParser.urlencoded({
     extended: true // to support URL-encoded bodies
 }));
 app.use('/docs', express.static('apidoc'));
+app.use('/tos', express.static('tos.html'));
 
 var corsOptions = {
     origin: true,
