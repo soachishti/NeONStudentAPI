@@ -5,16 +5,16 @@
 [http://neonapi-fastnustudent.rhcloud.com/docs](http://neonapi-fastnustudent.rhcloud.com/docs)
 
 ## Available Methods
-* /load 		(GET)
-* /login 		(POST)
-* /student 		(GET)
-* /attendence	(GET)
-* /challan 		(GET)
-* /transcript 	(GET)
-* /courses 		(GET)
-* /marks 		(GET)
-* /keepalive 	(GET)
-* /logout 		(GET)
+* /load         (GET) - Return token and captcha image
+* /login        (POST)
+* /student      (GET)
+* /attendence   (GET)
+* /challan      (GET)
+* /transcript   (GET)
+* /courses      (GET)
+* /marks        (GET)
+* /keepalive    (GET)
+* /logout       (GET)
 
 Note: All method need token in url except /load eg /student?token=...
 
