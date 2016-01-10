@@ -4,7 +4,7 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 	if (!token) {
 		res.statusCode = 406;
 		res.send({
-			error: "No token found."
+			error: "No token! Please login first."
 		});
 		return false;
 	}
@@ -38,7 +38,7 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 						if(error || typeof response.headers !== 'undefined' && response.headers['location']) {
 							res.statusCode = 406;
 							res.send({
-								error: "Session expired on NeON"
+								error: "NeON session expired! Try logging in again."
 							});
 							return false;	
 						}
@@ -53,7 +53,7 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 			else {
 				res.statusCode = 406;
 				res.send({
-					error: "Session not found on API server."
+					error: "Please login first."
 				});
 				return false;				
 			}
@@ -61,7 +61,7 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 		else {
 			res.statusCode = 406;
 			res.send({
-				error: "Token expired."
+				error: "Session expired! Try logging in again."
 			});
 			return false;
 		}

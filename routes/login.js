@@ -27,7 +27,7 @@ module.exports = function(app, request, cheerio) {
 			jar: j
 		});
 		
-		var allowed = {
+		/* var allowed = {
 			'146011' : 'PWR', 
 			'146016' : 'PWR', 
 			'152173' : 'KHI' 
@@ -39,7 +39,7 @@ module.exports = function(app, request, cheerio) {
 				error: "App isn't public yet."
 			});
 			return;
-		}
+		} */
 		
 		// Get value add in session by Load
 		store.LoginData.ddlCampus = req.body.campus;

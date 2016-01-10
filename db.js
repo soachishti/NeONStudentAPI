@@ -31,6 +31,10 @@ module.exports = {
 		});
 		return id;
 	},
+	DeleteUser: function (key, value) {
+		console.log("Update User")
+		db.run("DELETE FROM UserData WHERE key = ?",[key]);
+	},
 	UpdateUser: function (key, value) {
 		console.log("Update User")
 		db.run("UPDATE UserData SET value = ?, expire = ? WHERE key = ?",
