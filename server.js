@@ -15,9 +15,7 @@ var corsOptions = {
     origin: true,
     methods: ['POST', 'GET'],
     credentials: true,
-    maxAge: 3600,
-	exposedHeaders: ['Set-Cookie'],
-	allowedHeaders: ['Cookie']
+    maxAge: 3600
 };
 
 app.use(cors(corsOptions)); // For allowing Ajax to access out API
