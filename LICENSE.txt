@@ -1,24 +1,3 @@
-﻿# NeON Student API
-###### Core component of [NeON Student for Mobile](https://play.google.com/store/apps/details?id=com.neonstudentmobile)
-
-## API Detail
-[http://neonapi-fastnustudent.rhcloud.com/docs](http://neonapi-fastnustudent.rhcloud.com/docs)
-
-## Available Methods
-* /load         (GET) - Return token and captcha image
-* /login        (POST)
-* /student      (GET)
-* /attendence   (GET)
-* /challan      (GET)
-* /transcript   (GET)
-* /courses      (GET)
-* /marks        (GET)
-* /keepalive    (GET)
-* /logout       (GET)
-
-Note: All method need token in url except /load eg /student?token=...
-
-## License
 Copyright (c) 2016, soachishti
 All rights reserved.
 
