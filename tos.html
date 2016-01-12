@@ -26,11 +26,14 @@
         <br>
         <a href="http://neonapi-fastnustudent.rhcloud.com/" class="c1">http://neonapi-fastnustudent.rhcloud.com/</a></p>
     <h3>Privacy Policy</h3>
-    <p>To keep your session live we send a "token" in url request to keep session secure and to serve the requests. 
-        <br> After completing request this app keep the result (your information) to speed up the experience and to support offline usage.
-        <br> You can delete the data by going to Menu -&gt; Setting -&gt; Clear History and Log Out
-        <br>
-    </p>
+		<p>To keep your session live we send a "token" in url request to keep session secure and to serve the requests. 
+			<br> After completing request this app (locally on your device) keep the result (your information) to speed up the experience and to support offline usage.
+			<br> You can delete the data by going to Menu -&gt; Setting -&gt; Clear History and Log Out
+			<br>
+		</p>
+		<p>
+			We don't save password on API Server we delete it after logging in to NeON. For detail review routes/login.js in source code (line no ~64). For further request to NeON we keep NeON's session id on API server and these details are encrypted using AES 256 for detail review db.js in source code (line no ~45, ~62 and ~81)
+		</p>
     <h4>For any query</h4>
     <p>Syed Owais Ali Chishti
         <br> Email: <a href="mailto:p146011@nu.edu.pk">p146011@nu.edu.pk</a></p>

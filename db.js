@@ -1,6 +1,22 @@
-var uuid = require('node-uuid');
-var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database(".data.db");
+var dbConfig 	= require('./config.js');
+var uuid 		= require('node-uuid');
+var sqlite3 	= require('sqlite3').verbose();
+var db 			= new sqlite3.Database(dbConfig.filename); 
+var crypto 		= require('crypto');
+  
+function encrypt(text){
+  var cipher = crypto.createCipher(dbConfig.algorithm,dbConfig.password)
+  var crypted = cipher.update(text,'utf8','hex')
+  crypted += cipher.final('hex');
+  return crypted;
+}
+ 
+function decrypt(text){
+  var decipher = crypto.createDecipher(dbConfig.algorithm,dbConfig.password)
+  var dec = decipher.update(text,'hex','utf8')
+  dec += decipher.final('utf8');
+  return dec;
+}  
  
 db.serialize(function() {
 	db.run(
@@ -18,33 +34,39 @@ db.serialize(function() {
 		(Math.round(new Date().getTime() / 1000))
 	);
 });
+db.close(); 
 
- //db.close();
- 
 module.exports = {
 	CreateUser: function() {
+		var db = new sqlite3.Database(dbConfig.filename); 
 		var id = uuid.v1();
 		db.run("INSERT INTO UserData ('key', 'value', 'expire') VALUES ($key, $value, $expire)", {
 			$key: id,
-			$value: '{}',
+			$value: encrypt('{}'),
 			$expire: Math.round(new Date().getTime() / 1000)
 		});
+		db.close();
 		return id;
 	},
 	DeleteUser: function (key, value) {
-		console.log("Delete User " + key)
+		var db = new sqlite3.Database(dbConfig.filename); 
+		console.log("Delete User " + key);
 		db.run("DELETE FROM UserData WHERE key = ?",[key]);
+		db.close();
 	},
 	UpdateUser: function (key, value) {
+		var db = new sqlite3.Database(dbConfig.filename); 
 		console.log("Update User")
 		db.run("UPDATE UserData SET value = ?, expire = ? WHERE key = ?",
 			[
-				JSON.stringify(value),
+				encrypt(JSON.stringify(value)),
 				(Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout),
 				key
 			]);
+		db.close();
 	},
 	GetUser: function (key, callback) {
+		var db = new sqlite3.Database(dbConfig.filename); 
 		// Update expire date
 		db.run("UPDATE UserData SET expire = ? WHERE key = ?",
 		[
@@ -54,8 +76,9 @@ module.exports = {
 		
 		db.get("SELECT value FROM UserData WHERE key = ?", key,
 		function(err, row) {
+			db.close();
 			if (typeof row != 'undefined') {
-				return callback(JSON.parse(row.value));
+				return callback(JSON.parse(decrypt(row.value)));
 			}
 			return callback(null);
 		});
