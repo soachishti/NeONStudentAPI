@@ -1,5 +1,10 @@
 // export a function that accepts `app` as a param
 global.LoginCheck 	= require("./logincheck.js");
+global.CleanSubject = function (str) {
+	var res = /\s+(.*?)\s+\-/g.exec(str);
+	if (res != null && res != 'undefined') return res[1];
+	return null;
+} 
 
 module.exports = function (app, request, cheerio) {
     require("./load.js")(app, request, cheerio);

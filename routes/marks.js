@@ -35,7 +35,7 @@ module.exports = function (app, request, cheerio) {
 					
 					var tableInfo = {};
 					$("div#MainContent_pnlRegCourses").children().each(function(index, item) {
-						var SubjectName = CleanSubject($(item).find('span[id^="MainContent_rptrCourses_lblCourseID"]').text());   
+						var SubjectName = global.CleanSubject($(item).find('span[id^="MainContent_rptrCourses_lblCourseID"]').text());   
 						var subjectMarks = [];
 						
 						$(item).find('.grid-view').each(function(indexJ, itemJ) {
