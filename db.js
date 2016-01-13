@@ -48,7 +48,9 @@ connection.query(
 );
 	
 // Clear expired data
-connection.query("DELETE FROM UserData WHERE expire < ?" , [Math.round(new Date().getTime() / 1000)]);
+connection.query("DELETE FROM UserData WHERE expire < ?" , [Math.round(new Date().getTime() / 1000)], function (err, result) {
+	console.log('Delete Expired data: Count ' + result.affectedRows + ' rows');
+});
 
 
 module.exports = {
@@ -70,7 +72,7 @@ module.exports = {
 		var sql = "DELETE FROM UserData WHERE `key` = " + connection.escape(key);
 		connection.query(sql, function (err, result) {
 			if (err) throw err;
-			console.log('Delete Expired data: Count ' + result.affectedRows + ' rows');
+			console.log('Delete data: Count ' + result.affectedRows + ' rows');
 		});		
 	},
 	UpdateUser: function (key, value) {
@@ -91,15 +93,13 @@ module.exports = {
 		var expireTime = Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout;
 
 		var sql = "UPDATE UserData SET `expire` = " + connection.escape(new Date(expireTime * 1000)) + 
-			" WHERE `key` = " + connection.escape(key)  + ";";
-		console.log(sql);
-		
+			" WHERE `key` = " + connection.escape(key)  + ";";		
 		connection.query(sql, function (err, result) {});
 		
 		var sql    = "SELECT value FROM UserData WHERE `key` = " +  connection.escape(key) + ";";
 		connection.query(sql, function(err, row) {
 			if (typeof row != 'undefined') {
-				return callback(JSON.parse(decrypt(row.value)));
+				return callback(JSON.parse(decrypt(row[0].value)));
 			}
 			return callback(null);
 		});
