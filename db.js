@@ -76,7 +76,7 @@ module.exports = {
 		console.log("Update User")
 				
 		var sql = "UPDATE UserData SET value = "+ connection.escape(encrypt(JSON.stringify(value))) +
-				", expire = " +  + 
+				", expire = " + connection.escape((Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout))  + 
 				" WHERE key = " + connection.escape(key);
 	
 		connection.query(sql , function (err, result) {
