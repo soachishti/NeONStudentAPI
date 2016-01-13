@@ -1,12 +1,21 @@
 var uuid 		= require('node-uuid');
 var crypto 		= require('crypto');
 var mysql      = require('mysql');
+/* var connection = mysql.createConnection({
+	host     : process.env.OPENSHIFT_MYSQL_DB_HOST,
+	user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME,
+	pass     : process.env.OPENSHIFT_MYSQL_DB_PASSWORD,
+	port     : process.env.OPENSHIFT_MYSQL_DB_PORT,
+	database : process.env.OPENSHIFT_APP_NAME
+}); */
+
 var connection = mysql.createConnection({
-	host     : 'localhost',
+	host     : process.env.OPENSHIFT_MYSQL_DB_HOST,
 	user     : 'NeONStudentDB',
 	pass     : '',
 	database : process.env.OPENSHIFT_APP_NAME
 });
+
 
 connection.connect(function(err) {
 	if (err) {
