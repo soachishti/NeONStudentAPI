@@ -44,7 +44,7 @@ db.serialize(function() {
 		"  `value` text NOT NULL," + 
 		"  `expire` datetime NOT NULL," + 
 		"  PRIMARY KEY (`ID`)" + 
-		") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;" +  
+		") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;"
 	);
 	
 	// Clear expired data
