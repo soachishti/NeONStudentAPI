@@ -53,23 +53,37 @@ connection.query("DELETE FROM UserData WHERE expire < ?" , [Math.round(new Date(
 module.exports = {
 	CreateUser: function() {
 		var id = uuid.v1();
-		connection.query("INSERT INTO UserData ('key', 'value', 'expire') VALUES (?,?,?)", 
-			[id, encrypt('{}'), Math.round(new Date().getTime() / 1000)]
-		);
+		console.log("Creating User " + id);		
+		var data  = {
+			key		: id,
+			value	: encrypt('{}'),
+			expire	: Math.round(new Date().getTime() / 1000)
+		};
+		
+		var query = connection.query('INSERT INTO UserData SET ?', data, function(err, result) {});
 		return id;
 	},
 	DeleteUser: function (key, value) {
 		console.log("Delete User " + key);
-		connection.query("DELETE FROM UserData WHERE key = ?",[key]);
+		var sql "DELETE FROM UserData WHERE key = " + connection.escape(key);
+		connection.query(sql, function (err, result) {
+			if (err) throw err;
+			console.log('Delete Expired data: Count ' + result.affectedRows + ' rows');
+		});		
 	},
 	UpdateUser: function (key, value) {
 		console.log("Update User")
-		connection.query("UPDATE UserData SET value = ?, expire = ? WHERE key = ?",
+				
+		connection.query("UPDATE UserData SET value = ??, expire = ?? WHERE key = ?",
 			[
 				encrypt(JSON.stringify(value)),
 				(Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout),
 				key
-			]);
+			], 
+		function (err, result) {
+			if (err) throw err;
+			console.log('changed ' + result.changedRows + ' rows');
+		});
 	},
 	GetUser: function (key, callback) {
 		// Update expire date
@@ -77,10 +91,14 @@ module.exports = {
 		[
 			(Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout),
 			key
-		]);
+		],
+		function (err, result) {
+			if (err) throw err;
+			console.log('changed ' + result.changedRows + ' rows');
+		});
 		
-		connection.query("SELECT value FROM UserData WHERE key = ?", [key],
-		function(err, row) {
+		var sql    = "SELECT value FROM UserData WHERE key = " +  connection.escape(key);
+		connection.query(sql, function(err, row) {
 			if (typeof row != 'undefined') {
 				return callback(JSON.parse(decrypt(row.value)));
 			}
