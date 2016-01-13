@@ -64,7 +64,7 @@ module.exports = {
 	},
 	UpdateUser: function (key, value) {
 		console.log("Update User")
-		connection.query("UPDATE UserData SET value = ??, expire = ?? WHERE key = ?",
+		connection.query("UPDATE UserData SET value = ?, expire = ? WHERE key = ?",
 			[
 				encrypt(JSON.stringify(value)),
 				(Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout),
