@@ -77,9 +77,10 @@ module.exports = {
 				
 		var sql = "UPDATE UserData SET value = "+ connection.escape(encrypt(JSON.stringify(value))) +
 				", expire = " + connection.escape((Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout))  + 
-				" WHERE key = " + connection.escape(key);
+				" WHERE key = " + connection.escape(key) + ";";
+		console.log(sql);
 	
-		connection.query(sql , function (err, result) {
+		connection.query(sql, function (err, result) {
 			if (err) throw err;
 			console.log('changed ' + result.changedRows + ' rows');
 		});
@@ -88,7 +89,8 @@ module.exports = {
 		// Update expire date
 		
 		var sql = "UPDATE UserData SET expire = " + connection.escape((Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout)) + 
-			" WHERE key = " + connection.escape(key);
+			" WHERE key = " + connection.escape(key)  + ";";
+		console.log(sql);
 		
 		connection.query(sql, function (err, result) {
 			if (err) throw err;
