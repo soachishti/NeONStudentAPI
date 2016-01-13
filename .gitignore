@@ -4,3 +4,4 @@ BiskutStore.db
 test.php
 .data.db
 .data.db-journal
+/node_modules
