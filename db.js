@@ -73,7 +73,7 @@ module.exports = {
 	},
 	GetUser: function (key, callback) {
 		// Update expire date
-		connection.query("UPDATE UserData SET expire = ?? WHERE key = ?",
+		connection.query("UPDATE UserData SET expire = ? WHERE key = ?",
 		[
 			(Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout),
 			key
