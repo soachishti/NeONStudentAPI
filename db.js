@@ -36,20 +36,19 @@ function decrypt(text){
   return dec;
 }  
  
-db.serialize(function() {
-	connection.query(
-		"CREATE TABLE IF NOT EXISTS `UserData` (" + 
-		"  `ID` int(11) NOT NULL AUTO_INCREMENT," + 
-		"  `key` varchar(50) NOT NULL," + 
-		"  `value` text NOT NULL," + 
-		"  `expire` datetime NOT NULL," + 
-		"  PRIMARY KEY (`ID`)" + 
-		") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;"
-	);
+connection.query(
+	"CREATE TABLE IF NOT EXISTS `UserData` (" + 
+	"  `ID` int(11) NOT NULL AUTO_INCREMENT," + 
+	"  `key` varchar(50) NOT NULL," + 
+	"  `value` text NOT NULL," + 
+	"  `expire` datetime NOT NULL," + 
+	"  PRIMARY KEY (`ID`)" + 
+	") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;"
+);
 	
-	// Clear expired data
-	connection.query("DELETE FROM UserData WHERE expire < ?" , [Math.round(new Date().getTime() / 1000)]);
-});
+// Clear expired data
+connection.query("DELETE FROM UserData WHERE expire < ?" , [Math.round(new Date().getTime() / 1000)]);
+
 
 module.exports = {
 	CreateUser: function() {
