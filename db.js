@@ -65,7 +65,7 @@ module.exports = {
 	},
 	DeleteUser: function (key, value) {
 		console.log("Delete User " + key);
-		var sql "DELETE FROM UserData WHERE key = " + connection.escape(key);
+		var sql = "DELETE FROM UserData WHERE key = " + connection.escape(key);
 		connection.query(sql, function (err, result) {
 			if (err) throw err;
 			console.log('Delete Expired data: Count ' + result.affectedRows + ' rows');
