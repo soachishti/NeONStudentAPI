@@ -1,5 +1,4 @@
 module.exports = function (req, res, request, callback, isLoginCheck){
-	if (isLoginCheck != 1) isLoginCheck = 0;
 	var token = req.query.token;
 	if (!token) {
 		res.statusCode = 406;
@@ -18,7 +17,6 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 			}
 			else if (store.cookies && isLoginCheck == -1) 
 			{
-				// Checking if user have logged in on /load
 				callback(req, res, store);
 			}
 			else if (store.cookies && store.LoggedIn && isLoginCheck == 0) {		

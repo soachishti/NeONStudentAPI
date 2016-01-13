@@ -1,8 +1,26 @@
-var dbConfig 	= require('./config.js');
 var uuid 		= require('node-uuid');
-var sqlite3 	= require('sqlite3').verbose();
-var db 			= new sqlite3.Database(dbConfig.filename); 
 var crypto 		= require('crypto');
+var mysql      = require('mysql');
+var connection = mysql.createConnection({
+	host     : process.env.OPENSHIFT_MYSQL_DB_HOST,
+	user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME,
+	pass     : process.env.OPENSHIFT_MYSQL_DB_PASSWORD,
+	port     : process.env.OPENSHIFT_MYSQL_DB_PORT,
+	database : process.env.OPENSHIFT_APP_NAME
+});
+
+connection.connect(function(err) {
+	if (err) {
+		console.error('error connecting: ' + err.stack);
+		return;
+	}
+	console.log('connected as id ' + connection.threadId);
+});
+
+var dbConfig 	= {
+	algorithm 	: 'aes-256-ctr',
+	password  	: process.env.NEON_SECURE_PASSWORD	
+};
   
 function encrypt(text){
   var cipher = crypto.createCipher(dbConfig.algorithm,dbConfig.password)
@@ -19,64 +37,51 @@ function decrypt(text){
 }  
  
 db.serialize(function() {
-	db.run(
-		"CREATE TABLE IF NOT EXISTS UserData(			" + 
-		"	id INTEGER PRIMARY KEY   AUTOINCREMENT,	" +
-		"	key           CHAR(50)    	NOT NULL,	" +
-		"	value         TEXT,						" +
-		"	expire        DATETIME					" +
-		");											" 
+	connection.query(
+		"CREATE TABLE IF NOT EXISTS `UserData` (" + 
+		"  `ID` int(11) NOT NULL AUTO_INCREMENT," + 
+		"  `key` varchar(50) NOT NULL," + 
+		"  `value` text NOT NULL," + 
+		"  `expire` datetime NOT NULL," + 
+		"  PRIMARY KEY (`ID`)" + 
+		") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;" +  
 	);
 	
 	// Clear expired data
-	db.run(
-		"DELETE FROM UserData WHERE expire < ?" ,
-		(Math.round(new Date().getTime() / 1000))
-	);
+	connection.query("DELETE FROM UserData WHERE expire < ?" , [Math.round(new Date().getTime() / 1000)]);
 });
-db.close(); 
 
 module.exports = {
 	CreateUser: function() {
-		var db = new sqlite3.Database(dbConfig.filename); 
 		var id = uuid.v1();
-		db.run("INSERT INTO UserData ('key', 'value', 'expire') VALUES ($key, $value, $expire)", {
-			$key: id,
-			$value: encrypt('{}'),
-			$expire: Math.round(new Date().getTime() / 1000)
-		});
-		db.close();
+		connection.query("INSERT INTO UserData ('key', 'value', 'expire') VALUES (?,?,?)", 
+			[id, encrypt('{}'), Math.round(new Date().getTime() / 1000)]
+		);
 		return id;
 	},
 	DeleteUser: function (key, value) {
-		var db = new sqlite3.Database(dbConfig.filename); 
 		console.log("Delete User " + key);
-		db.run("DELETE FROM UserData WHERE key = ?",[key]);
-		db.close();
+		connection.query("DELETE FROM UserData WHERE key = ?",[key]);
 	},
 	UpdateUser: function (key, value) {
-		var db = new sqlite3.Database(dbConfig.filename); 
 		console.log("Update User")
-		db.run("UPDATE UserData SET value = ?, expire = ? WHERE key = ?",
+		connection.query("UPDATE UserData SET value = ??, expire = ?? WHERE key = ?",
 			[
 				encrypt(JSON.stringify(value)),
 				(Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout),
 				key
 			]);
-		db.close();
 	},
 	GetUser: function (key, callback) {
-		var db = new sqlite3.Database(dbConfig.filename); 
 		// Update expire date
-		db.run("UPDATE UserData SET expire = ? WHERE key = ?",
+		connection.query("UPDATE UserData SET expire = ?? WHERE key = ?",
 		[
 			(Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout),
 			key
 		]);
 		
-		db.get("SELECT value FROM UserData WHERE key = ?", key,
+		connection.query("SELECT value FROM UserData WHERE key = ?", [key],
 		function(err, row) {
-			db.close();
 			if (typeof row != 'undefined') {
 				return callback(JSON.parse(decrypt(row.value)));
 			}
