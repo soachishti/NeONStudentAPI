@@ -21,7 +21,7 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 				// Checking if user have logged in on /load
 				callback(req, res, store);
 			}
-			else if (store.cookies && store.LoggedIn) {		
+			else if (store.cookies && store.LoggedIn && isLoginCheck == 0) {		
 				var url = 'http://nu.edu.pk/NeONStudent/Registration/ViewStudentAttendance.aspx';
 				var j = request.jar();
 				var cookie = request.cookie(store.cookies);
