@@ -5,7 +5,7 @@ module.exports = {
 	ip_address : process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1",
 	port : process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 7881,	
 	NeonURL : 'http://nu.edu.pk/NeONStudent/',
-	DefaultTimeout : 60000,
+	DefaultTimeout : 6000, // 6 seconds
 	DefaultHeaders : {
 		'Accept'			:'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 		'Accept-Encoding'	:'gzip, deflate',
