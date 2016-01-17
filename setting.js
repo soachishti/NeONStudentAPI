@@ -1,6 +1,6 @@
 module.exports = {
 	//DataStoreTimeout : 2*24*60*60,
-	DataStoreTimeout : 30*60, //30min
+	DataStoreTimeout : 30*60, //30 min
 	token : null,
 	ip_address : process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1",
 	port : process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 7881,	

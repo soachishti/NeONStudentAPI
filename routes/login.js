@@ -68,7 +68,11 @@ module.exports = function(app, request, cheerio) {
 				});
 			} else {
 				res.statusCode = 406;
-				if (body.indexOf("Invalid Code") != -1) {
+				if (typeof body === 'undefined')
+                    res.send({
+						error: "No response from NeON - Timeout"
+					});
+                else if (body.indexOf("Invalid Code") != -1) {
 					res.send({
 						error: "Invalid captcha value!"
 					});

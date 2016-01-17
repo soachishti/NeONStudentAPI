@@ -1,22 +1,49 @@
 var uuid 		= require('node-uuid');
 var crypto 		= require('crypto');
 var mysql      = require('mysql');
-var connection = mysql.createConnection({
+var connection; 
+var db_config = {
 	host     : process.env.OPENSHIFT_MYSQL_DB_HOST || '127.0.0.1',
 	user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'root',
 	password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || '',
 	port     : process.env.OPENSHIFT_MYSQL_DB_PORT || 3306,
 	database : process.env.OPENSHIFT_APP_NAME || 'neonapi'
-}); 
+};
 
-connection.connect(function(err) {
+/* connection.connect(function(err) {
 	if (err) {
 		console.error('error connecting: ' + err.stack);
 		throw err;
 		return;
 	}
-	console.log('connected as id ' + connection.threadId);
-});
+}); */
+
+
+// Keep data base connection live.
+function handleDisconnect() {
+    connection = mysql.createConnection(db_config); 
+
+    connection.connect(function(err) {             
+        if(err) {                                  
+            console.log('error when connecting to db:', err);
+            setTimeout(handleDisconnect, 2000);    
+        }                                          
+        else 
+        	console.log('connected as id ' + connection.threadId);
+    });                                             
+    
+    connection.on('error', function(err) {
+        console.log('db error', err);
+        if(err.code === 'PROTOCOL_CONNECTION_LOST') {   
+            handleDisconnect();                         
+        } 
+        else {                                         
+            throw err;
+        }
+    });
+}
+
+handleDisconnect();
 
 var dbConfig 	= {
 	algorithm 	: 'aes-256-ctr',
@@ -51,7 +78,6 @@ connection.query(
 connection.query("DELETE FROM UserData WHERE expire < ?" , [Math.round(new Date().getTime() / 1000)], function (err, result) {
 	console.log('Delete Expired data: Count ' + result.affectedRows + ' rows');
 });
-
 
 module.exports = {
 	CreateUser: function() {
