@@ -85,7 +85,7 @@ module.exports = {
             callback(id);
         });
 	},
-	DeleteUser: function (key, value, callback) {
+	DeleteUser: function (key, callback) {
 		console.log("Delete User " + key);
 		var sql = "DELETE FROM UserData WHERE `key` = " + connection.escape(key);
 		connection.query(sql, function (err, result) {
