@@ -62,10 +62,12 @@ module.exports = function(app, request, cheerio) {
 
 				// Delete password from server
 				store.LoginData = null;
-				global.db.UpdateUser(token, store);
-				res.send({
-					result: true
-				});
+				global.db.UpdateUser(token, store, function(result) {
+                    console.log('changed ' + result.affectedRows + ' rows');
+                    res.send({
+                        result: true
+                    });                    
+                });
 			} else {
 				res.statusCode = 406;
 				if (typeof body === 'undefined')

@@ -22,13 +22,12 @@ module.exports = function (app, request, cheerio, db) {
 			headers	: global.setting.DefaultHeaders,
 			jar		: j
 		}, function(error, response, html) {
-			store = {};
-			global.db.UpdateUser(token, store);
-			global.db.DeleteUser(token);
-			
-			res.send({
-				result: "Have a good day!"
-			});
+			global.db.DeleteUser(token, function() {
+                console.log('Delete data: Count ' + result.affectedRows + ' rows');
+                res.send({
+                    result: "Have a good day!"
+                });                
+            });
 		});
 	}
 };

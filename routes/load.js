@@ -41,28 +41,32 @@ module.exports = function (app, request, cheerio, db) {
 				store.LoginData.login1_ClientState = '';
 
 				// Adding to Database
-				var token = global.db.CreateUser();
-				global.db.UpdateUser(token, store);
+				//var token = global.db.CreateUser();
+				global.db.CreateUser(function(token) {
+                    global.db.UpdateUser(token, store, function(result) {
+                        var captchaImgURI = global.setting.NeonURL + $('img[src^=CaptchaImage]').attr('src');
+                        request({
+                            url: captchaImgURI,
+                            encoding: null,
+                            timeout: global.setting.DefaultTimeout
+                        }, function(error, response, data) {
+                            if (!error && response.statusCode == 200) {
+                                var captchaImgData = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
+                                res.send({
+                                    captcha: captchaImgData,
+                                    token: token
+                                });
+                            } else {
+                                res.statusCode = 406;
+                                res.send({
+                                    error: "Error getting image, Please try again."
+                                });
+                            }
+                        });  
+                    });
+                });
 				
-				var captchaImgURI = global.setting.NeonURL + $('img[src^=CaptchaImage]').attr('src');
-				request({
-					url: captchaImgURI,
-					encoding: null,
-					timeout: global.setting.DefaultTimeout
-				}, function(error, response, data) {
-					if (!error && response.statusCode == 200) {
-						var captchaImgData = 'data:' + response.headers['content-type'] + ';base64,' + data.toString('base64');
-						res.send({
-							captcha: captchaImgData,
-							token: token
-						});
-					} else {
-						res.statusCode = 406;
-						res.send({
-							error: "Error getting image, Please try again."
-						});
-					}
-				});
+				
 			} else {
 				res.statusCode = 406;
 				res.send({

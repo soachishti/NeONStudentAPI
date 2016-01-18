@@ -10,15 +10,6 @@ var db_config = {
 	database : process.env.OPENSHIFT_APP_NAME || 'neonapi'
 };
 
-/* connection.connect(function(err) {
-	if (err) {
-		console.error('error connecting: ' + err.stack);
-		throw err;
-		return;
-	}
-}); */
-
-
 // Keep data base connection live.
 function handleDisconnect() {
     connection = mysql.createConnection(db_config); 
@@ -80,7 +71,7 @@ connection.query("DELETE FROM UserData WHERE expire < ?" , [Math.round(new Date(
 });
 
 module.exports = {
-	CreateUser: function() {
+	CreateUser: function(callback) {
 		var id = uuid.v1();
 		console.log("Creating User " + id);	
 	
@@ -90,18 +81,19 @@ module.exports = {
 			expire	: new Date()
 		};
 		
-		var query = connection.query('INSERT INTO UserData SET ?', data, function(err, result) {});
-		return id;
+		var query = connection.query('INSERT INTO UserData SET ?', data, function(err, result) {
+            callback(id);
+        });
 	},
-	DeleteUser: function (key, value) {
+	DeleteUser: function (key, value, callback) {
 		console.log("Delete User " + key);
 		var sql = "DELETE FROM UserData WHERE `key` = " + connection.escape(key);
 		connection.query(sql, function (err, result) {
 			if (err) throw err;
-			console.log('Delete data: Count ' + result.affectedRows + ' rows');
+            callback(result);
 		});		
 	},
-	UpdateUser: function (key, value) {
+	UpdateUser: function (key, value, callback) {
 		console.log("Update User")
 		var expireTime = Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout;
 		
@@ -111,7 +103,7 @@ module.exports = {
 	
 		connection.query(sql, function (err, result) {
 			if (err) throw err;
-			console.log('changed ' + result.affectedRows + ' rows');
+            callback(result);
 		});
 	},
 	GetUser: function (key, callback) {
