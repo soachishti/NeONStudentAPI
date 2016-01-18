@@ -116,10 +116,11 @@ module.exports = {
 		
 		var sql    = "SELECT value FROM UserData WHERE `key` = " +  connection.escape(key) + ";";
 		connection.query(sql, function(err, row) {
-			if (typeof row != 'undefined') {
+            if (err) callback(null);
+			else if (typeof row[0] !== 'undefined') {
 				return callback(JSON.parse(decrypt(row[0].value)));
 			}
-			return callback(null);
+            else return callback(null);
 		});
 	} 
 };

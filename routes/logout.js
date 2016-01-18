@@ -22,7 +22,7 @@ module.exports = function (app, request, cheerio, db) {
 			headers	: global.setting.DefaultHeaders,
 			jar		: j
 		}, function(error, response, html) {
-			global.db.DeleteUser(token, function() {
+			global.db.DeleteUser(token, function(result) {
                 console.log('Delete data: Count ' + result.affectedRows + ' rows');
                 res.send({
                     result: "Have a good day!"
