@@ -42,17 +42,20 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 						headers: global.setting.DefaultHeaders,
 						followRedirect : false,
 						jar : j
-					}, function (error, response, body) {
-                        console.log(error);
-                        console.log(response);
-                       
-						if(error || typeof response.headers !== 'undefined' && response.headers['location']) {
+					}, function (error, response, body) {                       
+                        if (error) {
+                            console.log(error);
+                            res.statusCode = 406;
+							res.send({
+								error: "Failed to get data."
+							});
+                        }
+						else if(typeof response.headers !== 'undefined' && response.headers['location']) {
 							console.log(response.headers);
                             res.statusCode = 406;
 							res.send({
 								error: "NeON session expired! Try logging in again."
 							});
-							return false;	
 						}
 						else {
 							callback(req, res, store);
