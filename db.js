@@ -18,6 +18,7 @@ function handleDisconnect() {
         if(err) {                                  
             console.log('error when connecting to db:', err);
             setTimeout(handleDisconnect, 2000);    
+            
         }                                          
         else 
         	console.log('connected as id ' + connection.threadId);
@@ -67,7 +68,7 @@ connection.query(
 	
 // Clear expired data
 connection.query("DELETE FROM UserData WHERE expire < ?" , [Math.round(new Date().getTime() / 1000)], function (err, result) {
-	console.log('Delete Expired data: Count ' + result.affectedRows + ' rows');
+	if (result) console.log('Delete Expired data: Count ' + result.affectedRows + ' rows');
 });
 
 module.exports = {
@@ -82,6 +83,10 @@ module.exports = {
 		};
 		
 		var query = connection.query('INSERT INTO UserData SET ?', data, function(err, result) {
+            if (err) {
+                console.log(err);
+                callback(null)
+            }
             callback(id);
         });
 	},
@@ -89,7 +94,10 @@ module.exports = {
 		console.log("Delete User " + key);
 		var sql = "DELETE FROM UserData WHERE `key` = " + connection.escape(key);
 		connection.query(sql, function (err, result) {
-			if (err) throw err;
+            if (err) {
+                console.log(err);
+                callback(null)
+            }
             callback(result);
 		});		
 	},
@@ -102,25 +110,34 @@ module.exports = {
 				" WHERE `key` = " + connection.escape(key) + ";";
 	
 		connection.query(sql, function (err, result) {
-			if (err) throw err;
+            if (err) {
+                console.log(err);
+                callback(null)
+            }
             callback(result);
 		});
 	},
 	GetUser: function (key, callback) {
 		// Update expire date
 		var expireTime = Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout;
-
-		var sql = "UPDATE UserData SET `expire` = " + connection.escape(new Date(expireTime * 1000)) + 
-			" WHERE `key` = " + connection.escape(key)  + ";";		
-		connection.query(sql, function (err, result) {});
 		
 		var sql    = "SELECT value FROM UserData WHERE `key` = " +  connection.escape(key) + ";";
 		connection.query(sql, function(err, row) {
-            if (err) callback(null);
+            if (err) {
+                console.log(err);
+                callback(null)
+            }
 			else if (typeof row[0] !== 'undefined') {
-				return callback(JSON.parse(decrypt(row[0].value)));
-			}
-            else return callback(null);
+				callback(JSON.parse(decrypt(row[0].value)));
+                var sql = "UPDATE UserData SET `expire` = " + connection.escape(new Date(expireTime * 1000)) + 
+                        " WHERE `key` = " + connection.escape(key)  + ";";		
+                connection.query(sql, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            }
+            else callback(false);            
 		});
 	} 
 };

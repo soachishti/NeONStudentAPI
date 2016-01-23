@@ -61,6 +61,7 @@ module.exports = function (app, request, cheerio) {
 						result: tableInfo
 					});
 				} else {
+                    console.log(error);
 					res.statusCode = 406;
 					res.send({
 						error: "Fail to get data."

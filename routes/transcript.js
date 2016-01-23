@@ -9,7 +9,6 @@ module.exports = function (app, request, cheerio) {
 	 */
 	app.get('/transcript', function(req, res) {
         global.LoginCheck(req, res, request,  transcriptCallback, 0);
-
 	})
 	
 	function transcriptCallback(req, res, store) {
@@ -65,6 +64,7 @@ module.exports = function (app, request, cheerio) {
 						result: jsonResponse
 					});
 				} else {
+                    console.log(error);
 					res.statusCode = 406;
 					res.send({
 						error: "Fail to get data."

@@ -22,7 +22,15 @@ module.exports = function (app, request, cheerio, db) {
 			headers	: global.setting.DefaultHeaders,
 			jar		: j
 		}, function(error, response, html) {
+            if (error) console.log(error);
 			global.db.DeleteUser(token, function(result) {
+                if (!result) {
+                    res.statusCode = 406;
+                    res.send({
+                        error: "Failed to query database."
+                    });
+                    return;
+                }
                 console.log('Delete data: Count ' + result.affectedRows + ' rows');
                 res.send({
                     result: "Have a good day!"

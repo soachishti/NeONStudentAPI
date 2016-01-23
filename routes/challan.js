@@ -42,9 +42,10 @@ module.exports = function (app, request, cheerio, db) {
 						result: challans
 					});
 				} else {
+                    console.log(error);
 					res.statusCode = 406;
 					res.send({
-						error: "No chalan to show."
+						error: "Failed to get data."
 					});
 				}
 			})

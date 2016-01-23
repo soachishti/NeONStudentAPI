@@ -43,10 +43,35 @@ module.exports = function(app, request, cheerio) {
 		
 		// Get value add in session by Load
 		store.LoginData.ddlCampus = req.body.campus;
-		store.LoginData.username = req.body.username;
-		store.LoginData.password = req.body.password;
-		store.LoginData.txtUserCaptcha = req.body.captcha;
+        var campuses = ['PWR', 'KHI', 'LHR', 'ISB', 'FSD'];
+        if (campuses.indexOf(store.LoginData.ddlCampus) == -1) {
+            res.statusCode = 406;
+            res.send({
+                error: "Invalid campus format!"
+			});
+            return;
+        }       
 
+		store.LoginData.username = req.body.username;
+        if (/^([0-9]{6})$/.test(store.LoginData.username) == false) {
+            res.statusCode = 406;            
+            res.send({
+                error: "Invalid username format!"
+			});
+            return;
+        }   
+        
+		store.LoginData.password = req.body.password;
+        
+		store.LoginData.txtUserCaptcha = req.body.captcha;
+        if (/^([a-zA-Z0-9]+)$/.test(store.LoginData.txtUserCaptcha) == false) {
+            res.statusCode = 406;
+            res.send({
+                error: "Invalid captcha format!"
+			});
+            return;
+        }   
+        
 		var customHeader = global.setting.DefaultHeaders;
 		customHeader.Referer = "http://nu.edu.pk/NeonStudent/";
 
@@ -63,12 +88,20 @@ module.exports = function(app, request, cheerio) {
 				// Delete password from server
 				store.LoginData = null;
 				global.db.UpdateUser(token, store, function(result) {
+                    if (!result) {
+                        res.statusCode = 406;
+                        res.send({
+                            error: "Failed to query database."
+                        });
+                        return;
+                    }
                     console.log('changed ' + result.affectedRows + ' rows');
                     res.send({
                         result: true
                     });                    
                 });
 			} else {
+                console.log(error);
 				res.statusCode = 406;
 				if (typeof body === 'undefined')
                     res.send({

@@ -64,6 +64,7 @@ module.exports = function (app, request, cheerio) {
 						result: json
 					});
 				} else {
+                    console.log(error);
 					res.statusCode = 406;
 					res.send({
 						error: "No course registered."

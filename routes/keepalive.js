@@ -24,9 +24,10 @@ module.exports = function (app, request, cheerio, db) {
 						result: "success"
 					});
 				} else {
+                    console.log(error);
 					res.statusCode = 406;
 					res.send({
-						error: "Failed."
+						error: "failed"
 					});
 				}
 			})

@@ -1,6 +1,14 @@
 module.exports = function (req, res, request, callback, isLoginCheck){
 	var token = req.query.token;
-	if (!token) {
+	if (/^([0-9a-z\-]+)$/.test(token) == false) {
+        console.log(token);
+		res.statusCode = 406;
+		res.send({
+			error: "Invalid token format!"
+		});
+		return false;
+	}
+    if (!token) {
 		res.statusCode = 406;
 		res.send({
 			error: "No token! Please login first."
@@ -9,7 +17,7 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 	}
 
 	global.db.GetUser(token, function (store) {
-		if (store != null) {
+		if (store) {
             //console.log(store.cookies);
             //console.log(store.LoginData);
             //console.log(isLoginCheck);
@@ -58,7 +66,14 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 				return false;				
 			}
 		}
+        else if (store == null) {
+            res.statusCode = 406;
+            res.send({
+                error: "Failed to query database."
+            });
+         }
 		else {
+            console.log(store);
 			res.statusCode = 406;
 			res.send({
 				error: "Session expired! Try logging in again."

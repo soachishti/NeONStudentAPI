@@ -59,13 +59,15 @@ module.exports = function (app, request, cheerio, db) {
 								result: student
 							});
 						} else {
+                            console.log(error);
 							res.send({
 								result: student,
-								error: "Error getting image."
+								error: "Failed to get image."
 							});
 						}
 					});
 				} else {
+                    console.log(error);
 					res.statusCode = 406;
 					res.send({
 						error: "Fail to get data."

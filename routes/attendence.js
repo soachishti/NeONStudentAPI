@@ -34,8 +34,6 @@ module.exports = function (app, request, cheerio) {
 						return;
 					}
 					
-					
-					
 					$("#MainContent_pnlRegCourses > table").each(function(index, item) {
 						var tableInfo = {};
 						tableInfo.title = global.CleanSubject($(item).find("span").first().text().trim());
@@ -64,6 +62,7 @@ module.exports = function (app, request, cheerio) {
 						result: json
 					});
 				} else {
+                    console.log(error);
 					res.statusCode = 406;
 					res.send({
 						error: "Fail to get data."

@@ -43,7 +43,23 @@ module.exports = function (app, request, cheerio, db) {
 				// Adding to Database
 				//var token = global.db.CreateUser();
 				global.db.CreateUser(function(token) {
+                    if (!token) {
+                        res.statusCode = 406;
+                            res.send({
+                            error: "Failed to query database."
+                        });
+                        return;
+                    }
+                
                     global.db.UpdateUser(token, store, function(result) {
+                        if (!result) {
+                            res.statusCode = 406;
+                                res.send({
+                                error: "Failed to query database."
+                            });
+                            return;
+                        }
+                    
                         var captchaImgURI = global.setting.NeonURL + $('img[src^=CaptchaImage]').attr('src');
                         request({
                             url: captchaImgURI,
@@ -68,9 +84,10 @@ module.exports = function (app, request, cheerio, db) {
 				
 				
 			} else {
+                console.log(error);
 				res.statusCode = 406;
 				res.send({
-					error: "Server failed to respond."
+					error: "Server failed to read NeON."
 				});
 			}
 		});
