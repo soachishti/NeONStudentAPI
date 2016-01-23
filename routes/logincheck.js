@@ -43,8 +43,12 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 						followRedirect : false,
 						jar : j
 					}, function (error, response, body) {
+                        console.log(error);
+                        console.log(response);
+                       
 						if(error || typeof response.headers !== 'undefined' && response.headers['location']) {
-							res.statusCode = 406;
+							console.log(response.headers);
+                            res.statusCode = 406;
 							res.send({
 								error: "NeON session expired! Try logging in again."
 							});
