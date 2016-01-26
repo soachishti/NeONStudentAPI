@@ -65,7 +65,14 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 				
 				
 			}
-			else {
+			else if (store.cookies && !store.LoggedIn) {
+                res.statusCode = 406;
+				res.send({
+					error: "Your last login failed, Login again."
+				});
+				return false;
+            }
+            else {
 				res.statusCode = 406;
 				res.send({
 					error: "Please login first."
@@ -78,7 +85,7 @@ module.exports = function (req, res, request, callback, isLoginCheck){
             res.send({
                 error: "Failed to query database."
             });
-         }
+        }
 		else {
             console.log(store);
 			res.statusCode = 406;

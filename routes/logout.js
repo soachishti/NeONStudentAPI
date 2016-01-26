@@ -9,7 +9,6 @@ module.exports = function (app, request, cheerio, db) {
 	app.get('/logout', function(req, res) {
         global.LoginCheck(req, res, request,  logoutCallback, -1);
 	})
-
 	
 	function logoutCallback(req, res, store) {
 		var cookie = request.cookie(store.cookies);
@@ -22,8 +21,11 @@ module.exports = function (app, request, cheerio, db) {
 			headers	: global.setting.DefaultHeaders,
 			jar		: j
 		}, function(error, response, html) {
-            if (error) console.log(error);
-			global.db.DeleteUser(token, function(result) {
+            if (error) {
+                console.log(error);
+                return;
+            }
+            global.db.DeleteUser(token, function(result) {
                 if (!result) {
                     res.statusCode = 406;
                     res.send({
