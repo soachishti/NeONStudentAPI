@@ -1,4 +1,5 @@
 var nodemailer = require('nodemailer');
+var sendmailTransport = require('nodemailer-sendmail-transport');
 
 module.exports = function (app, request) {		
 	/**
@@ -12,7 +13,9 @@ module.exports = function (app, request) {
 	app.get('/sendmessage', function(req, res) {
 
         // create reusable transporter object using the default SMTP transport
-        var transporter = nodemailer.createTransport('smtps://localhost');
+        var transporter = nodemailer.createTransport(sendmailTransport({
+            path: '/usr/share/sendmail'
+        }));    
 
         // setup e-mail data with unicode symbols
         var mailOptions = {
