@@ -17,6 +17,7 @@ module.exports = function (app, request) {
         console.log(req);
         if (!req.body.name || !req.body.email || !req.body.text) {
             res.send({
+                res.statusCode = 406;
                 error: "Invalid Name, Email, Message"
             });
         }
