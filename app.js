@@ -3,6 +3,7 @@
 var app 	= require('./server.js');
 var request = require('request');
 var cheerio = require('cheerio');
+//var process = require('process');
 global.db 			= require("./db.js");
 global.setting  	= require("./setting.js");
 
@@ -10,6 +11,9 @@ require("./routes/index.js")(app, request, cheerio);
 
 // Handle 404
 app.use(function(req, res) {
+	// TODO: remove this
+	//console.log('This process is your pid ' + process.pid);
+
     res.statusCode = 404;
 	res.send({
 		error: "Page not Found"

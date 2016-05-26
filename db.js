@@ -5,7 +5,7 @@ var connection;
 var db_config = {
 	host     : process.env.OPENSHIFT_MYSQL_DB_HOST || '127.0.0.1',
 	user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'root',
-	password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || '',
+	password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || 'root',
 	port     : process.env.OPENSHIFT_MYSQL_DB_PORT || 3306,
 	database : process.env.OPENSHIFT_APP_NAME || 'neonapi'
 };
@@ -17,8 +17,7 @@ function handleDisconnect() {
     connection.connect(function(err) {             
         if(err) {                                  
             console.log('error when connecting to db:', err);
-            setTimeout(handleDisconnect, 2000);    
-            
+            setTimeout(handleDisconnect, 2000);                
         }                                          
         else 
         	console.log('connected as id ' + connection.threadId);
