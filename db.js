@@ -138,5 +138,6 @@ module.exports = {
             }
             else callback(false);            
 		});
-	} 
+	},
+    con: connection
 };

@@ -6,6 +6,13 @@ function ucwords(str) {
     });
 }
 
+var campus = new Array();
+campus['PWR'] = 'Peshawar';
+campus['KHI'] = 'Karachi';
+campus['ISB'] = 'Islamabad';
+campus['LHR'] = 'Lahore';
+campus['FSD'] = 'Faisalabad';
+
 module.exports = function (app, request, cheerio, db) {
 	/**
 	 * @api {get} /student Student
@@ -37,13 +44,16 @@ module.exports = function (app, request, cheerio, db) {
 				if (!error) {
 					var $ = cheerio.load(html);
 					var student = {};
-					student.fullname = ucwords($('#MainContent_fvPersonal_lblName').text());
-					student.name = ucwords(student.fullname.split(" ")[0]);
-					student.rollno = $('#MainContent_fvPersonal_lblRollno').text();
-					student.degree = $('#MainContent_fvPersonal_lblDegree').text();
-					student.batch = $('#MainContent_fvPersonal_lblBatch').text();
-					student.campus = $('#MainContent_fvPersonal_lblCampus').text();
-					student.email = $('#MainContent_fvPersonal_lblEmail').text();
+					student.fullname    = ucwords($('#MainContent_fvPersonal_lblName').text());
+					student.name        = ucwords(student.fullname.split(" ")[0]);
+					student.rollno      = $('#MainContent_fvPersonal_lblRollno').text();
+					student.degree      = $('#MainContent_fvPersonal_lblDegree').text();
+					student.batch       = $('#MainContent_fvPersonal_lblBatch').text();
+					student.campus      = campus[$('#MainContent_fvPersonal_lblCampus').text()];
+					student.email       = $('#MainContent_fvPersonal_lblEmail').text();
+					student.mobile      = $('#MainContent_fvPersonal_lblMobileno').text();
+					student.cnic        = $('#MainContent_fvPersonal_lblCNIC').text();
+					student.nationality = $('#MainContent_fvPersonal_lblNationality').text();
 
 					var ImgURI = global.setting.NeonURL + $('#MainContent_fvPersonal_imgStudent').attr('src');
 					request({

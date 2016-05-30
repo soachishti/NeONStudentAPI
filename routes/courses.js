@@ -31,6 +31,7 @@ module.exports = function (app, request, cheerio) {
 					json.CreditLimit = $('#MainContent_lblCreditLimit').text();
 					json.CurrentCredit = $('#MainContent_lblCredits').text();
 					json.warning = $('#MainContent_lblWarning').text();
+					json.SelectedCourse = $('#MainContent_lblTotalRegisteredCourse').text();
 
 					var error = $("#MainContent_lblNoReg");
 					if (error && error.text()) {

@@ -1,5 +1,6 @@
 ﻿'use strict';
 
+var cron = require('node-cron');
 var app 	= require('./server.js');
 var request = require('request');
 var cheerio = require('cheerio');
@@ -8,6 +9,38 @@ global.db 			= require("./db.js");
 global.setting  	= require("./setting.js");
 
 require("./routes/index.js")(app, request, cheerio);
+ 
+var task = cron.schedule('*/20 * * * *', function() {
+    //console.log('Will Run every 20 min ');
+    var sql = "SELECT `key` FROM UserData;";
+    db.con.query(sql, function(err, data) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            for (var i in data) {
+                var key = data[i].key;
+                var url = "http://" + global.setting.ip_address + ":" + global.setting.port + "/keepalive?token=" + key;
+                request({
+                    url: url,
+                    timeout: global.setting.DefaultTimeout,
+                    headers: global.setting.DefaultHeaders
+                }, function(error, response, html) {
+                    if (!error) {
+                        console.log("CRON[INFO]: " + key + " session updated.");
+                    } else {
+                        console.log("CRON[FAIL]: " + key + " unable to update session | " + error);
+                    }
+                });
+            }
+        } 
+    });
+  
+}, false);
+ 
+task.start();
+
+
 
 // Handle 404
 app.use(function(req, res) {

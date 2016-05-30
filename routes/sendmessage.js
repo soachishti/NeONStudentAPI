@@ -1,6 +1,3 @@
-var nodemailer = require('nodemailer');
-var sendmailTransport = require('nodemailer-sendmail-transport');
-
 module.exports = function (app, request) {		
 	/**
 	 * @api {post} /sendmessage Send feedback message to author.
@@ -14,10 +11,10 @@ module.exports = function (app, request) {
         var api_key = 'key-5929d54ff5836aa34a59e2764c29225a';
         var domain = 'sandboxe2e07f9c730543a8bed61289e68a0a2d.mailgun.org';
         var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
-        console.log(req);
+        //console.log(req);
         if (!req.body.name || !req.body.email || !req.body.text) {
+            res.statusCode = 406;
             res.send({
-                res.statusCode = 406;
                 error: "Invalid Name, Email, Message"
             });
         }

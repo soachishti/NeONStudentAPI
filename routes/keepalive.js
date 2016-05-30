@@ -12,25 +12,25 @@ module.exports = function (app, request, cheerio, db) {
 	
 	function keepaliveCallback(req, res, store) {
 		var cookie = request.cookie(store.cookies);
-			j.setCookie(cookie, global.setting.NeonURL);
+        var j = request.jar();
+        j.setCookie(cookie, global.setting.NeonURL);
 
-			request({
-				url: global.setting.NeonURL + 'ViewStudentProfile.aspx',
-				timeout: global.setting.DefaultTimeout,
-				headers: global.setting.DefaultHeaders
-			}, function(error, response, html) {
-				if (!error) {
-					res.send({
-						result: "success"
-					});
-				} else {
-                    console.log(error);
-					res.statusCode = 406;
-					res.send({
-						error: "failed"
-					});
-				}
-			})
+        request({
+            url: global.setting.NeonURL + 'ViewStudentProfile.aspx',
+            timeout: global.setting.DefaultTimeout,
+            headers: global.setting.DefaultHeaders
+        }, function(error, response, html) {
+            if (!error) {
+                res.send({
+                    result: "success"
+                });
+            } else {
+                res.statusCode = 406;
+                res.send({
+                    error: "failed"
+                });
+            }
+        });
 	}
 
 };

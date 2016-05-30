@@ -1,4 +1,8 @@
+var demo_data = require("./demo_data.js");
+var url = require("url");
+
 module.exports = function (req, res, request, callback, isLoginCheck){
+
 	var token = req.query.token;
 	if (/^([0-9a-z\-]+)$/.test(token) == false) {
         console.log(token);
@@ -15,7 +19,32 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 		});
 		return false;
 	}
-
+    
+   
+    if (token == "00000000-0000-0000-0000-000000000000")
+    {
+        var path = url.parse(req.url).pathname.substr(1);
+        
+        if (path == "logout") {
+            res.send({
+                result: 'Bye, Dummy account.'
+            }); 
+            return;
+        }
+        if (path == "login") {
+            res.send({
+                result: true
+            }); 
+            return;
+        }
+        
+        var pathname = url.parse(req.url).pathname;
+        res.send({
+			result: demo_data[path]['result']
+		});
+        return;
+    }
+    
 	global.db.GetUser(token, function (store) {
 		if (store) {
             //console.log(store.cookies);
