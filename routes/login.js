@@ -81,7 +81,7 @@ module.exports = function(app, request, cheerio) {
                         });
                         return;
                     }
-                    console.log('changed ' + result.affectedRows + ' rows');
+                    //console.log('changed ' + result.affectedRows + ' rows');
                     res.send({
                         result: true
                     });                    

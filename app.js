@@ -61,9 +61,6 @@ function cron_task() {
                         }
                     });
                 })(key);
-                
-                
-                
             }
            
         } 

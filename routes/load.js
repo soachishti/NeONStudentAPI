@@ -45,7 +45,7 @@ module.exports = function (app, request, cheerio, db) {
 				global.db.CreateUser(function(token) {
                     if (!token) {
                         res.statusCode = 406;
-                            res.send({
+                        res.send({
                             error: "Failed to query database."
                         });
                         return;

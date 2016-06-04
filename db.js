@@ -81,7 +81,7 @@ module.exports = {
 			expire	: new Date()
 		};
 		
-		var query = connection.query('INSERT INTO `userdata` SET ?', data, function(err, result) {
+		var query = connection.query('INSERT INTO `UserData` SET ?', data, function(err, result) {
             if (err) {
                 console.log(err);
                 callback(null)
@@ -91,7 +91,7 @@ module.exports = {
 	},
 	DeleteUser: function (key, callback) {
 		///console.log("Delete User " + key);
-		var sql = "DELETE FROM `userdata` WHERE `key` = " + connection.escape(key);
+		var sql = "DELETE FROM `UserData` WHERE `key` = " + connection.escape(key);
         //console.log(sql);
 		connection.query(sql, function (err, result) {
             if (err) {
