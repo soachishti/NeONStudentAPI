@@ -39,9 +39,13 @@ module.exports = function (req, res, request, callback, isLoginCheck){
         }
         
         var pathname = url.parse(req.url).pathname;
-        res.send({
-			result: demo_data[path]['result']
-		});
+        
+        setTimeout (function() {
+            res.send({
+                result: demo_data[path]['result']
+            });
+        }
+        , 6000);
         return;
     }
     
@@ -80,7 +84,6 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 							});
                         }
 						else if(typeof response.headers !== 'undefined' && response.headers['location']) {
-							console.log(response.headers);
                             res.statusCode = 406;
 							res.send({
 								error: "NeON session expired! Try logging in again."

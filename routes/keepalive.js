@@ -20,6 +20,7 @@ module.exports = function (app, request, cheerio, db) {
             timeout: global.setting.DefaultTimeout,
             headers: global.setting.DefaultHeaders
         }, function(error, response, html) {
+
             if (!error) {
                 res.send({
                     result: "success"
