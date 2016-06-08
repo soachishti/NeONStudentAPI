@@ -33,15 +33,23 @@ module.exports = function (app, request, cheerio) {
 					json.warning = $('#MainContent_lblWarning').text();
 					json.SelectedCourse = $('#MainContent_lblTotalRegisteredCourse').text();
 
-					var error = $("#MainContent_lblNoReg");
+                    // Handle no course for this semester
+					var info = $("#MainContent_lblNoReg");
 					if (error && error.text()) {
+						res.send({
+							info: error.text()
+                        });
+						return;
+					}	
+
+                    if (!json.cgpa || !json.CreditEarned) {
 						//res.statusCode = 406;
 						res.send({
-							error: error.text(),
+							error: global.Error.NeONExpired,
 							result: json
 						});
 						return;
-					}				
+					}	
 					
 					var courses = [];
 					var headers = [];
@@ -68,7 +76,7 @@ module.exports = function (app, request, cheerio) {
                     console.log(error);
 					res.statusCode = 406;
 					res.send({
-						error: "No course registered."
+						error: global.Error.NetworkError
 					});
 				}
 			})

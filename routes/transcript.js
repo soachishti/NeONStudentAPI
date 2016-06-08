@@ -65,8 +65,7 @@ module.exports = function (app, request, cheerio) {
                                     
                         jsonResponse.push(semester_detail);
 					});
-                    
-					
+
 					res.send({
 						result: jsonResponse
 					});
@@ -74,7 +73,7 @@ module.exports = function (app, request, cheerio) {
                     console.log(error);
 					res.statusCode = 406;
 					res.send({
-						error: "Fail to get data."
+						error: global.Error.NetworkError
 					});
 				}
 			})

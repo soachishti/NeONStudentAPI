@@ -32,6 +32,14 @@ module.exports = function (app, request, cheerio) {
 				if (!error) {       
                     var $ = cheerio.load(html);	
                     
+                    var error = $("#MainContent_lblNoReg");
+					if (error && error.text()) {
+						res.send({
+							info: error.text()
+						});
+						return;
+					}
+                    
                     var tableInfo = {};
                     $("#MainContent_pnlRegCourses > table").each(function(index, course_tbl) {
                         var SubjectName = global.CleanSubject($(course_tbl).find('span[id^="MainContent_rptrCourses_lblCourseID"]').text());   
@@ -72,7 +80,7 @@ module.exports = function (app, request, cheerio) {
                     console.log(error);
 					res.statusCode = 406;
 					res.send({
-						error: "Fail to get data."
+						error: global.Error.NetworkError
 					});
 				}
 			})

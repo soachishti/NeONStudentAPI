@@ -40,13 +40,12 @@ module.exports = function (app, request, cheerio, db) {
 				store.LoginData.submit = 'Log in';
 				store.LoginData.login1_ClientState = '';
 
-				// Adding to Database
-				//var token = global.db.CreateUser();
 				global.db.CreateUser(function(token) {
                     if (!token) {
                         res.statusCode = 406;
+                        console.log();
                         res.send({
-                            error: "Failed to query database."
+                            error: global.Error.DatabaseError
                         });
                         return;
                     }
@@ -55,7 +54,7 @@ module.exports = function (app, request, cheerio, db) {
                         if (!result) {
                             res.statusCode = 406;
                                 res.send({
-                                error: "Failed to query database."
+                                error: global.Error.DatabaseError
                             });
                             return;
                         }
@@ -75,7 +74,7 @@ module.exports = function (app, request, cheerio, db) {
                             } else {
                                 res.statusCode = 406;
                                 res.send({
-                                    error: "Error getting image, Please try again."
+                                    error: global.Error.ImageError
                                 });
                             }
                         });  
@@ -87,7 +86,7 @@ module.exports = function (app, request, cheerio, db) {
                 console.log(error);
 				res.statusCode = 406;
 				res.send({
-					error: "Server failed to read NeON."
+					error: global.Error.NetworkError
 				});
 			}
 		});

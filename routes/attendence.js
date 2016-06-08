@@ -29,7 +29,7 @@ module.exports = function (app, request, cheerio) {
 					var error = $("#MainContent_lblNoReg");
 					if (error && error.text()) {
 						res.send({
-							error: error.text()
+							info: error.text()
 						});
 						return;
 					}
@@ -65,7 +65,7 @@ module.exports = function (app, request, cheerio) {
                     console.log(error);
 					res.statusCode = 406;
 					res.send({
-						error: "Fail to get data."
+						error: global.Error.NetworkError
 					});
 				}
 			})

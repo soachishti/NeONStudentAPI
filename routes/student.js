@@ -55,6 +55,15 @@ module.exports = function (app, request, cheerio, db) {
 					student.cnic        = $('#MainContent_fvPersonal_lblCNIC').text();
 					student.nationality = $('#MainContent_fvPersonal_lblNationality').text();
 
+                    // Request initiated when not logged in.
+                    if (!student.fullname) {
+                        res.statusCode = 406;
+                        res.send({
+                            error: global.Error.NeONExpired
+                        });
+                        return;
+                    }
+                    
 					var ImgURI = global.setting.NeonURL + $('#MainContent_fvPersonal_imgStudent').attr('src');
 					request({
 						url: ImgURI,
@@ -72,7 +81,7 @@ module.exports = function (app, request, cheerio, db) {
                             console.log(error);
 							res.send({
 								result: student,
-								error: "Failed to get image."
+								info: global.Error.ImageError
 							});
 						}
 					});
@@ -80,7 +89,7 @@ module.exports = function (app, request, cheerio, db) {
                     console.log(error);
 					res.statusCode = 406;
 					res.send({
-						error: "Fail to get data."
+						error: global.Error.NetworkError
 					});
 				}
 			})

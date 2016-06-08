@@ -35,7 +35,7 @@ module.exports = function (app, request, cheerio, db) {
                 }
                 console.log('Delete data: Count ' + result.affectedRows + ' rows');
                 res.send({
-                    result: "Have a good day!"
+                    result: "true"
                 });                
             });
 		});

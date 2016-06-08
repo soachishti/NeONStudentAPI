@@ -33,7 +33,7 @@ module.exports = function(app, request, cheerio) {
         if (campuses.indexOf(store.LoginData.ddlCampus) == -1) {
             res.statusCode = 406;
             res.send({
-                error: "Invalid campus format!"
+                error: global.Error.InvalidCampus
 			});
             return;
         }       
@@ -42,7 +42,7 @@ module.exports = function(app, request, cheerio) {
         if (/^([0-9]{6})$/.test(store.LoginData.username) == false) {
             res.statusCode = 406;            
             res.send({
-                error: "Invalid username format!"
+                error: global.Error.InvalidUser
 			});
             return;
         }   
@@ -53,7 +53,7 @@ module.exports = function(app, request, cheerio) {
         if (/^([a-zA-Z0-9]+)$/.test(store.LoginData.txtUserCaptcha) == false) {
             res.statusCode = 406;
             res.send({
-                error: "Invalid captcha format!"
+                error: global.Error.InvalidCaptcha
 			});
             return;
         }   
@@ -77,7 +77,7 @@ module.exports = function(app, request, cheerio) {
                     if (!result) {
                         res.statusCode = 406;
                         res.send({
-                            error: "Failed to query database."
+                            error: global.Error.DatabaseError
                         });
                         return;
                     }
@@ -91,23 +91,23 @@ module.exports = function(app, request, cheerio) {
 				res.statusCode = 406;
 				if (typeof body === 'undefined')
                     res.send({
-						error: "No response from NeON - Timeout"
+						error: global.Error.NetworkError
 					});
                 else if (body.indexOf("Invalid Code") != -1) {
 					res.send({
-						error: "Invalid captcha value!"
+						error: global.Error.InvalidCaptcha
 					});
 				} else if (body.indexOf("Login Failed.Try Again") != -1) {
 					res.send({
-						error: "Invalid username or password!"
+						error: global.Error.InvalidUserPass
 					});
 				} else if (body.indexOf("Something goes wrong with the connection") != -1) {
 					res.send({
-						error: "Server switch off!"
+						error: global.Error.NeONDown
 					});
 				} else {
 					res.send({
-						error: "NeON behaving awkward"
+						error: global.Error.NetworkError
 					});
 				}
 			}

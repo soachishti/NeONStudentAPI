@@ -6,6 +6,22 @@ global.CleanSubject = function (str) {
 	return null;
 } 
 
+global.Error = {
+    NetworkError    : "NeON read error",
+    DatabaseError   : "Database query failed",
+    ImageError      : "Image load failed",
+    NeONExpired     : "NeON session expired",
+    InvalidToken    : "Invalid token",
+    NoToken         : "Token expired",
+    APIExpired      : "API session expired",
+    InvalidCaptcha  : "Invalid captcha",
+    InvalidUserPass : "Invalid username/password",
+    NeONDown        : "Server switch off!",
+    InvalidUser     : "Invalid username",
+    InvalidCampus   : "Invalid campus",
+    LoginFirst      : "No session found"
+};
+
 module.exports = function (app, request, cheerio) {
     require("./load.js")(app, request, cheerio);
     require("./login.js")(app, request, cheerio);

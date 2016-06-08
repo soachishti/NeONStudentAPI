@@ -22,7 +22,6 @@ module.exports = function (app, request, cheerio, db) {
 				headers	: global.setting.DefaultHeaders,
 				jar		: j
 			}, function(error, response, html) {
-				console.log("In courses request");
 				if (!error) {
 					var $ = cheerio.load(html);
 					var challans = [];
@@ -45,7 +44,7 @@ module.exports = function (app, request, cheerio, db) {
                     console.log(error);
 					res.statusCode = 406;
 					res.send({
-						error: "Failed to get data."
+						error: global.Error.NetworkError
 					});
 				}
 			})
