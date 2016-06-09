@@ -33,7 +33,7 @@ module.exports = function(app, request, cheerio) {
         if (campuses.indexOf(store.LoginData.ddlCampus) == -1) {
             res.statusCode = 406;
             res.send({
-                error: global.Error.InvalidCampus
+                error: global.Errors.InvalidCampus
 			});
             return;
         }       
@@ -42,7 +42,7 @@ module.exports = function(app, request, cheerio) {
         if (/^([0-9]{6})$/.test(store.LoginData.username) == false) {
             res.statusCode = 406;            
             res.send({
-                error: global.Error.InvalidUser
+                error: global.Errors.InvalidUser
 			});
             return;
         }   
@@ -53,7 +53,7 @@ module.exports = function(app, request, cheerio) {
         if (/^([a-zA-Z0-9]+)$/.test(store.LoginData.txtUserCaptcha) == false) {
             res.statusCode = 406;
             res.send({
-                error: global.Error.InvalidCaptcha
+                error: global.Errors.InvalidCaptcha
 			});
             return;
         }   
@@ -77,7 +77,7 @@ module.exports = function(app, request, cheerio) {
                     if (!result) {
                         res.statusCode = 406;
                         res.send({
-                            error: global.Error.DatabaseError
+                            error: global.Errors.DatabaseError
                         });
                         return;
                     }
@@ -91,23 +91,23 @@ module.exports = function(app, request, cheerio) {
 				res.statusCode = 406;
 				if (typeof body === 'undefined')
                     res.send({
-						error: global.Error.NetworkError
+						error: global.Errors.NetworkError
 					});
                 else if (body.indexOf("Invalid Code") != -1) {
 					res.send({
-						error: global.Error.InvalidCaptcha
+						error: global.Errors.InvalidCaptcha
 					});
 				} else if (body.indexOf("Login Failed.Try Again") != -1) {
 					res.send({
-						error: global.Error.InvalidUserPass
+						error: global.Errors.InvalidUserPass
 					});
 				} else if (body.indexOf("Something goes wrong with the connection") != -1) {
 					res.send({
-						error: global.Error.NeONDown
+						error: global.Errors.NeONDown
 					});
 				} else {
 					res.send({
-						error: global.Error.NetworkError
+						error: global.Errors.NetworkError
 					});
 				}
 			}

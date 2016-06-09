@@ -6,7 +6,7 @@ global.CleanSubject = function (str) {
 	return null;
 } 
 
-global.Error = {
+global.Errorss = {
     NetworkError    : "NeON read error",
     DatabaseError   : "Database query failed",
     ImageError      : "Image load failed",

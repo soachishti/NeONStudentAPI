@@ -44,7 +44,7 @@ module.exports = function (app, request, cheerio, db) {
                     console.log(error);
 					res.statusCode = 406;
 					res.send({
-						error: global.Error.NetworkError
+						error: global.Errors.NetworkError
 					});
 				}
 			})

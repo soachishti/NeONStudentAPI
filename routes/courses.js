@@ -45,7 +45,7 @@ module.exports = function (app, request, cheerio) {
                     if (!json.cgpa || !json.CreditEarned) {
 						//res.statusCode = 406;
 						res.send({
-							error: global.Error.NeONExpired,
+							error: global.Errors.NeONExpired,
 							result: json
 						});
 						return;
@@ -76,7 +76,7 @@ module.exports = function (app, request, cheerio) {
                     console.log(error);
 					res.statusCode = 406;
 					res.send({
-						error: global.Error.NetworkError
+						error: global.Errors.NetworkError
 					});
 				}
 			})

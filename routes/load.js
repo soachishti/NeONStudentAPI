@@ -45,7 +45,7 @@ module.exports = function (app, request, cheerio, db) {
                         res.statusCode = 406;
                         console.log();
                         res.send({
-                            error: global.Error.DatabaseError
+                            error: global.Errors.DatabaseError
                         });
                         return;
                     }
@@ -54,7 +54,7 @@ module.exports = function (app, request, cheerio, db) {
                         if (!result) {
                             res.statusCode = 406;
                                 res.send({
-                                error: global.Error.DatabaseError
+                                error: global.Errors.DatabaseError
                             });
                             return;
                         }
@@ -74,7 +74,7 @@ module.exports = function (app, request, cheerio, db) {
                             } else {
                                 res.statusCode = 406;
                                 res.send({
-                                    error: global.Error.ImageError
+                                    error: global.Errors.ImageError
                                 });
                             }
                         });  
@@ -86,7 +86,7 @@ module.exports = function (app, request, cheerio, db) {
                 console.log(error);
 				res.statusCode = 406;
 				res.send({
-					error: global.Error.NetworkError
+					error: global.Errors.NetworkError
 				});
 			}
 		});

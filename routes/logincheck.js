@@ -8,14 +8,14 @@ module.exports = function (req, res, request, callback, isLoginCheck){
         console.log(token);
 		res.statusCode = 406;
 		res.send({
-			error: global.Error.InvalidToken
+			error: global.Errors.InvalidToken
 		});
 		return false;
 	}
     if (!token) {
 		res.statusCode = 406;
 		res.send({
-			error: global.Error.NoToken
+			error: global.Errors.NoToken
 		});
 		return false;
 	}
@@ -77,13 +77,13 @@ module.exports = function (req, res, request, callback, isLoginCheck){
                             console.log(error);
                             res.statusCode = 406;
 							res.send({
-								error: global.Error.NetworkError
+								error: global.Errors.NetworkError
 							});
                         }
 						else if(typeof response.headers !== 'undefined' && response.headers['location']) {
                             res.statusCode = 406;
 							res.send({
-								error: global.Error.NeONExpired
+								error: global.Errors.NeONExpired
 							});
 						}
 						else {
@@ -97,7 +97,7 @@ module.exports = function (req, res, request, callback, isLoginCheck){
             else {
 				res.statusCode = 406;
 				res.send({
-					error: global.Error.LoginFirst
+					error: global.Errors.LoginFirst
 				});
 				return false;				
 			}
@@ -105,14 +105,14 @@ module.exports = function (req, res, request, callback, isLoginCheck){
         else if (store == null) {
             res.statusCode = 406;
             res.send({
-                error: global.Error.DatabaseError
+                error: global.Errors.DatabaseError
             });
         }
 		else {
             console.log(store);
 			res.statusCode = 406;
 			res.send({
-				error: global.Error.APIExpired
+				error: global.Errors.APIExpired
 			});
 			return false;
 		}

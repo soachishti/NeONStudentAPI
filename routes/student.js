@@ -59,7 +59,7 @@ module.exports = function (app, request, cheerio, db) {
                     if (!student.fullname) {
                         res.statusCode = 406;
                         res.send({
-                            error: global.Error.NeONExpired
+                            error: global.Errors.NeONExpired
                         });
                         return;
                     }
@@ -81,7 +81,7 @@ module.exports = function (app, request, cheerio, db) {
                             console.log(error);
 							res.send({
 								result: student,
-								info: global.Error.ImageError
+								info: global.Errors.ImageError
 							});
 						}
 					});
@@ -89,7 +89,7 @@ module.exports = function (app, request, cheerio, db) {
                     console.log(error);
 					res.statusCode = 406;
 					res.send({
-						error: global.Error.NetworkError
+						error: global.Errors.NetworkError
 					});
 				}
 			})
