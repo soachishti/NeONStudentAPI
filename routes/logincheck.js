@@ -45,7 +45,7 @@ module.exports = function (req, res, request, callback, isLoginCheck){
                 result: demo_data[path]['result']
             });
         }
-        , 6000);
+        , 3000);
         return;
     }
     
