@@ -58,7 +58,21 @@ module.exports = function (app, request, cheerio) {
 						json[data].absentHour = absentHour;
 					}
 
+					var semester = {};
+					$("select#MainContent_ddlSem option").each(function(index, item) {
+						semester[$(item).text()] = {};
+						semester[$(item).text()]['text'] = $(item).val();
+
+						var selected = $(item).attr("selected");
+						if (selected == "selected")
+							semester[$(item).text()]['selected'] = true;
+						else
+							semester[$(item).text()]['selected'] = false;
+						 
+					});
+					
 					res.send({
+						semester: semester,
 						result: json
 					});
 				} else {
