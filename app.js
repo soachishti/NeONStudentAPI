@@ -68,5 +68,5 @@ function cron_task() {
     });
 }
 cron_task();
-var task = cron.schedule('*/10 * * * *', cron_task, false);
+var task = cron.schedule('*/20 * * * *', cron_task, false);
 task.start();
