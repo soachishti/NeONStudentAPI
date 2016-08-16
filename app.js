@@ -6,7 +6,8 @@ var request = require('request');
 var cheerio = require('cheerio');
 //var process = require('process');
 global.db 			= require("./db.js");
-global.setting  	= require("./setting.js");
+global.setting      = require("./setting.js");
+global.tools      	= require("./tools.js");
 
 require("./routes/index.js")(app, request, cheerio);
 

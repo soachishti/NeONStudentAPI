@@ -24,57 +24,7 @@ module.exports = function (app, request, cheerio) {
 			}, function(error, response, html) {
 				if (!error) {
 					var $ = cheerio.load(html);
-					var json = [];
-
-					var error = $("#MainContent_lblNoReg");
-					if (error && error.text()) {
-						res.send({
-							info: error.text()
-						});
-						return;
-					}
-					
-					$("#MainContent_pnlRegCourses > table").each(function(index, item) {
-						var tableInfo = {};
-						tableInfo.title = global.CleanSubject($(item).find("span").first().text().trim());
-
-						var attendence = [];
-						$(item).find('.grid-viewForAttendance > tr:nth-child(2) td').each(function(j, cell) {
-							var data = $(cell).text().trim();
-							if (data) attendence.push([data]);
-						});
-
-						tableInfo.attendence = attendence;
-
-						json.push(tableInfo);
-					});
-
-					for (var data in json) {
-						var percentage = json[data].attendence.pop()
-						var presentHour = json[data].attendence.pop()
-						var absentHour = json[data].attendence.pop()
-						json[data].percentage = percentage;
-						json[data].presentHour = presentHour;
-						json[data].absentHour = absentHour;
-					}
-
-					var semester = {};
-					$("select#MainContent_ddlSem option").each(function(index, item) {
-						semester[$(item).text()] = {};
-						semester[$(item).text()]['text'] = $(item).val();
-
-						var selected = $(item).attr("selected");
-						if (selected == "selected")
-							semester[$(item).text()]['selected'] = true;
-						else
-							semester[$(item).text()]['selected'] = false;
-						 
-					});
-					
-					res.send({
-						semester: semester,
-						result: json
-					});
+					global.tools.ProcessAttendence($, res, req);					
 				} else {
                     console.log(error);
 					res.statusCode = 406;
