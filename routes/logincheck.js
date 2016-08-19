@@ -112,7 +112,8 @@ module.exports = function (req, res, request, callback, isLoginCheck){
             console.log(store);
 			res.statusCode = 406;
 			res.send({
-				error: global.Errors.APIExpired
+				error: global.Errors.NeONExpired
+				//error: global.Errors.APIExpired
 			});
 			return false;
 		}

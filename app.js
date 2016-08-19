@@ -36,7 +36,7 @@ app.listen(global.setting.port, global.setting.ip_address, function() {
 
 
 function cron_task() {
-    //console.log('Will Run every 20 min ');
+    //console.log('Will Run every 15 min ');
     var sql = "SELECT `key` FROM UserData;";
     db.con.query(sql, function(err, data) {
         if (err) {
@@ -54,10 +54,10 @@ function cron_task() {
                         headers: global.setting.DefaultHeaders
                     }, function(error, response, html) {
                         if (!error && response.statusCode == 200) {
-                            console.log("CRON[INFO]: " + user_key + " session updated.");
+                            console.log(Date() + ": CRON[INFO]: " + user_key + " session updated.");
                         } else {
                             global.db.DeleteUser(user_key, function(result) {
-                                console.log("CRON[FAIL]: " + user_key + " delete from db");
+                                console.log(Date() + ": CRON[FAIL]: " + user_key + " delete from db");
                             });
                         }
                     });
@@ -68,5 +68,5 @@ function cron_task() {
     });
 }
 cron_task();
-var task = cron.schedule('*/20 * * * *', cron_task, false);
+var task = cron.schedule('*/15 * * * *', cron_task, false);
 task.start();
