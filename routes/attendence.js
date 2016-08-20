@@ -7,6 +7,10 @@ module.exports = function (app, request, cheerio) {
 	 * @apiSuccess {String} result JSON formated array data with title, percentage, percentHour, absentHour
 	 * @apiError error Reason for failing to get data.
 	 */
+	app.post('/attendence', function(req, res) {
+        global.LoginCheck(req, res, request,  attendenceCallback, 0);
+	})
+
 	app.get('/attendence', function(req, res) {
         global.LoginCheck(req, res, request,  attendenceCallback, 0);
 	})

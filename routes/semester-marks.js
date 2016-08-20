@@ -7,6 +7,10 @@ module.exports = function (app, request, cheerio) {
 	 * @apiSuccess {String} result JSON formated array data with title, and marks
 	 * @apiError error Reason for failing to get data.
 	 */
+	app.post('/semester-marks', function(req, res) {
+        global.LoginCheck(req, res, request,  attendenceCallback, 0);
+	})
+
 	app.get('/semester-marks', function(req, res) {
         global.LoginCheck(req, res, request,  attendenceCallback, 0);
 	})
@@ -38,7 +42,14 @@ module.exports = function (app, request, cheerio) {
 
 					AjaxData['ctl00$MainContent$CollapsiblePanelExtender1_ClientState'] = 'true';
 					
-					AjaxData['ctl00$MainContent$ddlSem'] = req.query.semester;
+					if (req.query.semester) {
+						AjaxData['ctl00$MainContent$ddlSem'] = req.query.semester;
+					}
+					else {
+						AjaxData['ctl00$MainContent$ddlSem'] = req.body.semester;
+					}
+
+
 					AjaxData['ctl00$MainContent$ddlRollno'] = '';//req.query.rollno;
 					
 					AjaxData['ctl00$cpeDesc_ClientState'] = 'false';

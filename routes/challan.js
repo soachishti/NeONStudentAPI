@@ -7,6 +7,11 @@ module.exports = function (app, request, cheerio, db) {
 	 * @apiSuccess {String} result JSON formated data similar to table in NeON site because it is direct scrape.
 	 * @apiError error Reason for failing to get data.
 	 */
+	app.post('/challan', function(req, res) {
+        global.LoginCheck(req, res, request,  challanCallback, 0);
+	})
+
+
 	app.get('/challan', function(req, res) {
         global.LoginCheck(req, res, request,  challanCallback, 0);
 	})

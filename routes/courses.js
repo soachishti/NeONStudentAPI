@@ -7,6 +7,10 @@ module.exports = function (app, request, cheerio) {
 	 * @apiSuccess {String} result JSON formated array data with cgpa, CreditEarned, CreditLimit, CurrentCredit, warning and courses list
 	 * @apiError error Reason for failing to get data.
 	 */
+	app.post('/courses', function(req, res) {
+        global.LoginCheck(req, res, request, coursesCallback, 0);
+	})
+
 	app.get('/courses', function(req, res) {
         global.LoginCheck(req, res, request, coursesCallback, 0);
 	})

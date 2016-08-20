@@ -3,7 +3,15 @@ var url = require("url");
 
 module.exports = function (req, res, request, callback, isLoginCheck){
 
-	var token = req.query.token;
+	var token;
+	if (typeof(req.body.token) != "undefined") {
+		token = req.body.token;
+	}
+	else {
+		token = req.query.token;
+	}
+
+
 	if (/^([0-9a-z\-]+)$/.test(token) == false) {
         console.log(token);
 		res.statusCode = 406;

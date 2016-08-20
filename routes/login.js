@@ -13,13 +13,21 @@ module.exports = function(app, request, cheerio) {
      * @apiError error Reason for failing to login such wrong captcha, credential or server down.
      */
     app.post('/login', function(req, res) {
-        console.log("Login POST");
         global.LoginCheck(req, res, request, loginCallback, 1);
     })
 		
 	function loginCallback(req, res, store) {
 		store.cookies = store.cookies + ";myCookie=username=" + req.body.username;
-		var token = req.query.token;
+		
+		var token;
+		if (typeof(req.body.token) != "undefined") {
+			token = req.body.token;
+		}
+		else {
+			token = req.query.token;
+		}
+
+
 		var cookie = request.cookie(store.cookies);
 		var j = request.jar();
 		j.setCookie(cookie, global.setting.NeonURL);

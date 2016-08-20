@@ -7,6 +7,10 @@ module.exports = function (app, request, cheerio) {
 	 * @apiSuccess {String} result JSON formated array data with title, percentage, percentHour, absentHour
 	 * @apiError error Reason for failing to get data.
 	 */
+	app.post('/semester-attendence', function(req, res) {
+        global.LoginCheck(req, res, request,  attendenceCallback, 0);
+	})
+
 	app.get('/semester-attendence', function(req, res) {
         global.LoginCheck(req, res, request,  attendenceCallback, 0);
 	})
@@ -38,8 +42,14 @@ module.exports = function (app, request, cheerio) {
 
 					AjaxData['ctl00$MainContent$CollapsiblePanelExtender1_ClientState'] = 'true';
 					
-					AjaxData['ctl00$MainContent$ddlSem'] = req.query.semester;
-					AjaxData['ctl00$MainContent$ddlRollno'] = req.query.rollno;
+					if (req.query.semester) {
+						AjaxData['ctl00$MainContent$ddlSem'] = req.query.semester;
+					}
+					else {
+						AjaxData['ctl00$MainContent$ddlSem'] = req.body.semester;
+					}
+
+					AjaxData['ctl00$MainContent$ddlRollno'] = '';//req.query.rollno;
 					
 					AjaxData['ctl00$cpeDesc_ClientState'] = 'false';
 					AjaxData['ctl00$ScriptManager1'] = 'ctl00$MainContent$UP1|ctl00$MainContent$ddlSem';

@@ -13,7 +13,7 @@ app.use('/tos', express.static('tos.html'));
 
 var corsOptions = {
     origin: true,
-    methods: ['POST', 'GET'],
+    methods: ['POST', 'GET', 'OPTIONS'],
     credentials: true,
     maxAge: 3600
 };

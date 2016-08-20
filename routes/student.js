@@ -22,6 +22,11 @@ module.exports = function (app, request, cheerio, db) {
 	 * @apiSuccess {String} result JSON formatted data with fullname, name, rollno, degree, batch, campus and email.
 	 * @apiError error Reason for failing.
 	 */
+	app.post('/student', function(req, res) {
+		console.log("student POST");
+        global.LoginCheck(req, res, request,  studentCallback, 0);
+	})
+
 	app.get('/student', function(req, res) {
 		console.log("student GET");
         global.LoginCheck(req, res, request,  studentCallback, 0);
@@ -29,8 +34,6 @@ module.exports = function (app, request, cheerio, db) {
 
 	
 	function studentCallback(req, res, store) {
-			var token = req.query.token;
-
 			var cookie = request.cookie(store.cookies);
 			var j = request.jar();
 			j.setCookie(cookie, global.setting.NeonURL);

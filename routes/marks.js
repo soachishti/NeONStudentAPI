@@ -9,12 +9,12 @@ module.exports = function (app, request, cheerio) {
 	 * @apiSuccess {String} result JSON formated array data with title, and marks
 	 * @apiError error Reason for failing to get data.
 	 */
-	app.get('/marks', function(req, res) {
-        /* fs.readFile("E:/marks1.html", (err, data) => {
-            if (err) throw err;
-            
-        }); */
+	
+	app.post('/marks', function(req, res) {
+        global.LoginCheck(req, res, request,  marksCallback, 0);
+	})
 
+	app.get('/marks', function(req, res) {
         global.LoginCheck(req, res, request,  marksCallback, 0);
 	})
 

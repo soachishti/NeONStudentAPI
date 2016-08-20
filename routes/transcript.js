@@ -7,6 +7,10 @@ module.exports = function (app, request, cheerio) {
 	 * @apiSuccess {String} result JSON formated array data with index semester number and data inside each.
 	 * @apiError error Reason for failing to get data.
 	 */
+	app.post('/transcript', function(req, res) {
+        global.LoginCheck(req, res, request,  transcriptCallback, 0);
+	})
+
 	app.get('/transcript', function(req, res) {
         global.LoginCheck(req, res, request,  transcriptCallback, 0);
 	})
