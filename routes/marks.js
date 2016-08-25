@@ -29,17 +29,19 @@ module.exports = function (app, request, cheerio) {
 				headers	: global.setting.DefaultHeaders,
 				jar		: j
 			}, function(error, response, html) {
-				if (!error) {       
-                    var $ = cheerio.load(html);	
-                    global.tools.ProcessMarks($, res, req);
-                    					
-				} else {
-                    console.log(error);
+				if (global.tools.LoginCheckOnRequest(response, res, error)) return;
+								
+				var $ = cheerio.load(html);	
+				
+				if ($('#lblRollno').text() == "") {
 					res.statusCode = 406;
 					res.send({
-						error: global.Errors.NetworkError
+						error: global.Errors.NeONExpired
 					});
 				}
+								
+				global.tools.ProcessMarks($, res, req);
+				
 			})
 	}
 };

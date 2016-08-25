@@ -44,57 +44,35 @@ module.exports = function (app, request, cheerio, db) {
 				headers	: global.setting.DefaultHeaders,
 				jar		: j
 			}, function(error, response, html) {
-				if (!error) {
-					var $ = cheerio.load(html);
-					var student = {};
-					student.fullname    = ucwords($('#MainContent_fvPersonal_lblName').text());
-					student.name        = ucwords(student.fullname.split(" ")[0]);
-					student.rollno      = $('#MainContent_fvPersonal_lblRollno').text();
-					student.degree      = $('#MainContent_fvPersonal_lblDegree').text();
-					student.batch       = $('#MainContent_fvPersonal_lblBatch').text();
-					student.campus      = campus[$('#MainContent_fvPersonal_lblCampus').text()];
-					student.email       = $('#MainContent_fvPersonal_lblEmail').text();
-					student.mobile      = $('#MainContent_fvPersonal_lblMobileno').text();
-					student.cnic        = $('#MainContent_fvPersonal_lblCNIC').text();
-					student.nationality = $('#MainContent_fvPersonal_lblNationality').text();
+				if (global.tools.LoginCheckOnRequest(response, res, error)) return;
+				
+				var $ = cheerio.load(html);
+				var student = {};
+				student.fullname    = ucwords($('#MainContent_fvPersonal_lblName').text());
+				student.name        = ucwords(student.fullname.split(" ")[0]);
+				student.rollno      = $('#MainContent_fvPersonal_lblRollno').text();
+				student.degree      = $('#MainContent_fvPersonal_lblDegree').text();
+				student.batch       = $('#MainContent_fvPersonal_lblBatch').text();
+				student.campus      = campus[$('#MainContent_fvPersonal_lblCampus').text()];
+				student.email       = $('#MainContent_fvPersonal_lblEmail').text();
+				student.mobile      = $('#MainContent_fvPersonal_lblMobileno').text();
+				student.cnic        = $('#MainContent_fvPersonal_lblCNIC').text();
+				student.nationality = $('#MainContent_fvPersonal_lblNationality').text();
+				student.gender 		= $('#MainContent_fvPersonal_lblGender').text();
+				
 
-                    // Request initiated when not logged in.
-                    if (!student.fullname) {
-                        res.statusCode = 406;
-                        res.send({
-                            error: global.Errors.NeONExpired
-                        });
-                        return;
-                    }
-                    
-					var ImgURI = global.setting.NeonURL + $('#MainContent_fvPersonal_imgStudent').attr('src');
-					request({
-						url: ImgURI,
-						encoding: null,
-						timeout	: global.setting.DefaultTimeout,
-						headers	: global.setting.DefaultHeaders,
-						jar		: j
-					}, function(error, response, data) {
-						if (!error && response.statusCode == 200) {
-							student.img = 'data:image/jpeg;base64,' + data.toString('base64');
-							res.send({
-								result: student
-							});
-						} else {
-                            console.log(error);
-							res.send({
-								result: student,
-								info: global.Errors.ImageError
-							});
-						}
-					});
-				} else {
-                    console.log(error);
+				// Request initiated when not logged in.
+				if (!student.fullname) {
 					res.statusCode = 406;
 					res.send({
-						error: global.Errors.NetworkError
+						error: global.Errors.NeONExpired
 					});
+					return;
 				}
+
+				res.send({
+					result: student
+				});
 			})
 	}
 };

@@ -24,9 +24,13 @@ module.exports = function (app, request, cheerio, db) {
 			timeout	: global.setting.DefaultTimeout,
 			headers	: global.setting.DefaultHeaders,
 			jar		: j
-		}, function(error, response, html) {
-            if (error) {
+		}, function(error, response, html) {		
+			if (error) {
                 console.log(error);
+				res.statusCode = 406;
+				res.send({
+					error: "false"
+				});
                 return;
             }
             global.db.DeleteUser(token, function(result) {

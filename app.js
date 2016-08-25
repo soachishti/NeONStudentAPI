@@ -36,7 +36,7 @@ app.listen(global.setting.port, global.setting.ip_address, function() {
 
 
 function cron_task() {
-    //console.log('Will Run every 15 min ');
+    console.log('Will Run every 15 min ');
     var sql = "SELECT `key` FROM UserData;";
     db.con.query(sql, function(err, data) {
         if (err) {
@@ -47,11 +47,12 @@ function cron_task() {
                 var key = data[i].key;                
                 
                 (function(user_key) {
-                    var url = "http://" + global.setting.ip_address + ":" + global.setting.port + "/keepalive?token=" + user_key;
-                    request({
+                    var url = "http://" + global.setting.ip_address + ":" + global.setting.port + "/keepalive";
+                    request.post({
                         url: url,
                         timeout: global.setting.DefaultTimeout,
-                        headers: global.setting.DefaultHeaders
+                        headers: global.setting.DefaultHeaders,
+                        form: {token: user_key}
                     }, function(error, response, html) {
                         if (!error && response.statusCode == 200) {
                             console.log(Date() + ": CRON[INFO]: " + user_key + " session updated.");

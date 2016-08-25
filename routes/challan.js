@@ -27,31 +27,25 @@ module.exports = function (app, request, cheerio, db) {
 				headers	: global.setting.DefaultHeaders,
 				jar		: j
 			}, function(error, response, html) {
-				if (!error) {
-					var $ = cheerio.load(html);
-					var challans = [];
-					var headers = [];
-					$('#MainContent_gvChallan th').each(function(index, item) {
-						headers[index] = $(item).text();
+				if (global.tools.LoginCheckOnRequest(response, res, error)) return;
+				
+				var $ = cheerio.load(html);
+				var challans = [];
+				var headers = [];
+				$('#MainContent_gvChallan th').each(function(index, item) {
+					headers[index] = $(item).text();
+				});
+				$('#MainContent_gvChallan tr').has('td').each(function() {
+					var ChalanInfo = {};
+					$('td', $(this)).each(function(index, item) {
+						ChalanInfo[headers[index]] = $(item).text().replace(/[\t\n]+/g, ' ').trim();
 					});
-					$('#MainContent_gvChallan tr').has('td').each(function() {
-						var ChalanInfo = {};
-						$('td', $(this)).each(function(index, item) {
-							ChalanInfo[headers[index]] = $(item).text().replace(/[\t\n]+/g, ' ').trim();
-						});
-						challans.push(ChalanInfo);
-					})
+					challans.push(ChalanInfo);
+				})
 
-					res.send({
-						result: challans
-					});
-				} else {
-                    console.log(error);
-					res.statusCode = 406;
-					res.send({
-						error: global.Errors.NetworkError
-					});
-				}
+				res.send({
+					result: challans
+				});
 			})
 	}
 };

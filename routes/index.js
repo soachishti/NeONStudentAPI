@@ -34,6 +34,7 @@ module.exports = function (app, request, cheerio) {
     require("./marks.js")(app, request, cheerio);
     require("./semester-marks.js")(app, request, cheerio);
     require("./student.js")(app, request, cheerio);
+    require("./studentimage.js")(app, request, cheerio);
     require("./transcript.js")(app, request, cheerio);
     require("./sendmessage.js")(app, request);
 	

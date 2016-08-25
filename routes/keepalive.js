@@ -22,19 +22,14 @@ module.exports = function (app, request, cheerio, db) {
         request({
             url: global.setting.NeonURL + 'ViewStudentProfile.aspx',
             timeout: global.setting.DefaultTimeout,
-            headers: global.setting.DefaultHeaders
+            headers: global.setting.DefaultHeaders,
+            jar: j
         }, function(error, response, html) {
-
-            if (!error) {
-                res.send({
-                    result: "success"
-                });
-            } else {
-                res.statusCode = 406;
-                res.send({
-                    error: "failed"
-                });
-            }
+			if (global.tools.LoginCheckOnRequest(response, res, error)) return;
+			
+			res.send({
+				result: "success"
+			});
         });
 	}
 

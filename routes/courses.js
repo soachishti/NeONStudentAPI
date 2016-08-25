@@ -26,63 +26,57 @@ module.exports = function (app, request, cheerio) {
 				headers	: global.setting.DefaultHeaders,
 				jar		: j
 			}, function(error, response, html) {
-				if (!error) {
-					var $ = cheerio.load(html);
-									
-					var json = {};
-					json.cgpa = $('#MainContent_lblCGPA').text();
-					json.CreditEarned = $('#MainContent_lblCrErn').text();
-					json.CreditLimit = $('#MainContent_lblCreditLimit').text();
-					json.CurrentCredit = $('#MainContent_lblCredits').text();
-					json.warning = $('#MainContent_lblWarning').text();
-					json.SelectedCourse = $('#MainContent_lblTotalRegisteredCourse').text();
+				if (global.tools.LoginCheckOnRequest(response, res, error)) return;
+				
+				var $ = cheerio.load(html);
+								
+				var json = {};				
+				json.cgpa = $('#MainContent_lblCGPA').text();
+				json.CreditEarned = $('#MainContent_lblCrErn').text();
+				json.CreditLimit = $('#MainContent_lblCreditLimit').text();
+				json.CurrentCredit = $('#MainContent_lblCredits').text();
+				json.warning = $('#MainContent_lblWarning').text();
+				json.SelectedCourse = $('#MainContent_lblTotalRegisteredCourse').text();
 
-                    // Handle no course for this semester
-					var info = $("#MainContent_lblNoReg");
-					if (error && error.text()) {
-						res.send({
-							info: error.text()
-                        });
-						return;
-					}	
-
-                    if (!json.cgpa || !json.CreditEarned) {
-						//res.statusCode = 406;
-						res.send({
-							error: global.Errors.NeONExpired,
-							result: json
-						});
-						return;
-					}	
-					
-					var courses = [];
-					var headers = [];
-
-					var calls = [];
-
-					$('#MainContent_GVRegisterCourses th').each(function(index, item) {
-						headers[index] = $(item).text();
-					})
-
-					$('#MainContent_GVRegisterCourses tr').has('td').each(function() {
-						var CourseInfo = {};
-						$('td', $(this)).each(function(index, item) {
-							CourseInfo[headers[index]] = $(item).text().replace(/[\t\n]+/g, ' ').trim();
-						});
-						courses.push(CourseInfo);
-					});
-
-					json.courses = courses;
+				// Handle no course for this semester
+				var info = $("#MainContent_lblNoReg");
+				if (error && error.text()) {
 					res.send({
+						info: error.text()
+					});
+					return;
+				}	
+
+				if (!json.cgpa || !json.CreditEarned) {
+					//res.statusCode = 406;
+					res.send({
+						error: global.Errors.NeONExpired,
 						result: json
 					});
-				} else {
-                    console.log(error);
-					res.statusCode = 406;
-					res.send({
-						error: global.Errors.NetworkError
+					return;
+				}	
+				
+				var courses = [];
+				var headers = [];
+
+				var calls = [];
+
+				$('#MainContent_GVRegisterCourses th').each(function(index, item) {
+					headers[index] = $(item).text();
+				})
+
+				$('#MainContent_GVRegisterCourses tr').has('td').each(function() {
+					var CourseInfo = {};
+					$('td', $(this)).each(function(index, item) {
+						CourseInfo[headers[index]] = $(item).text().replace(/[\t\n]+/g, ' ').trim();
 					});
-				}
+					courses.push(CourseInfo);
+				});
+
+				json.courses = courses;
+				res.send({
+					result: json
+				});
 			})
 	}
 };

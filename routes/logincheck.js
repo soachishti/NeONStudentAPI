@@ -10,8 +10,7 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 	else {
 		token = req.query.token;
 	}
-
-
+	
 	if (/^([0-9a-z\-]+)$/.test(token) == false) {
         console.log(token);
 		res.statusCode = 406;
@@ -68,8 +67,9 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 			{
 				callback(req, res, store);
 			}
-			else if (store.cookies && store.LoggedIn && isLoginCheck == 0) {		
-				var url = global.setting.NeonURL + 'Registration/ViewStudentAttendance.aspx';
+			else if (store.cookies && store.LoggedIn && isLoginCheck == 0) {
+				/* 
+				var url = global.setting.NeonURL + 'Registration/ChangePassword.aspx';
 				var j = request.jar();
 				var cookie = request.cookie(store.cookies);
 				j.setCookie(cookie, global.setting.NeonURL);
@@ -88,7 +88,7 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 								error: global.Errors.NetworkError
 							});
                         }
-						else if(typeof response.headers !== 'undefined' && response.headers['location']) {
+						else if(typeof(response.headers) !== 'undefined' && response.headers['location']) {
                             res.statusCode = 406;
 							res.send({
 								error: global.Errors.NeONExpired
@@ -98,9 +98,8 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 							callback(req, res, store);
 						}
 					}
-				);
-				
-				
+				); */
+				callback(req, res, store);				
 			}
             else {
 				res.statusCode = 406;

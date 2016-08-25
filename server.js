@@ -2,8 +2,10 @@ var express 	= require('express');
 var bodyParser 	= require('body-parser');
 var cors 		= require('cors')
 var uuid        = require('node-uuid');
+var compression = require('compression')
 
 var app = express();
+app.use(compression());
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({
     extended: true // to support URL-encoded bodies

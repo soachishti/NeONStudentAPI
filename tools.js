@@ -1,4 +1,22 @@
 module.exports = {
+	LoginCheckOnRequest: function(response, res, error) {
+		if (error) {
+			console.log(error);
+			res.statusCode = 406;
+			res.send({
+				error: global.Errors.NetworkError
+			});
+			return true;
+		}
+		else if(response.statusCode == 500 || typeof(response.headers) !== 'undefined' && response.headers['location']) {
+			res.statusCode = 406;
+			res.send({
+				error: global.Errors.NeONExpired
+			});
+			return true;
+		}
+		return false;
+	},
     ProcessAttendence: function($, res, req) {
         var json = [];
         var return_result = {};
