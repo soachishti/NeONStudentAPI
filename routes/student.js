@@ -69,7 +69,7 @@ module.exports = function (app, request, cheerio, db) {
 					});
 					return;
 				}
-
+				student.img = "";
 				res.send({
 					result: student
 				});
