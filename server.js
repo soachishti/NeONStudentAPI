@@ -1,7 +1,6 @@
 var express 	= require('express');
 var bodyParser 	= require('body-parser');
 var cors 		= require('cors')
-var uuid        = require('node-uuid');
 var compression = require('compression')
 
 var app = express();

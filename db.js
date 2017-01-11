@@ -1,8 +1,9 @@
-var uuid 		= require('node-uuid');
+var uuidV4      = require('uuid/v4');
+//var uuid 		= require('node-uuid');
 var crypto 		= require('crypto');
-var mysql      = require('mysql');
+var mysql       = require('mysql');
 var connection; 
-var db_config = {
+var db_config   = {
 	host     : process.env.OPENSHIFT_MYSQL_DB_HOST || '127.0.0.1',
 	user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'root',
 	password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || 'root',
@@ -72,7 +73,7 @@ connection.query("DELETE FROM UserData WHERE expire < ?" , [Math.round(new Date(
 
 module.exports = {
 	CreateUser: function(callback) {
-		var id = uuid.v1();
+		var id = uuidV4();
 		console.log("Creating User " + id);	
 	
 		var data  = {
