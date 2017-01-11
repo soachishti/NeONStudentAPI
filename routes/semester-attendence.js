@@ -31,11 +31,13 @@ module.exports = function (app, request, cheerio) {
 
 				BaseResponse = cheerio.load(html);
 				
-				if (BaseResponse('#lblRollno').text() == "") {
+				var rollNo = BaseResponse('#lblRollno').text();
+				if (rollNo == "") {
 					res.statusCode = 406;
 					res.send({
 						error: global.Errors.NeONExpired
 					});
+					return;
 				}
 				
 				if (BaseResponse('#lblBatch').text() == req.body.semester) {
@@ -55,7 +57,7 @@ module.exports = function (app, request, cheerio) {
 				
 				AjaxData.__ASYNCPOST = 'true';
 
-				AjaxData['ctl00$MainContent$CollapsiblePanelExtender1_ClientState'] = 'true';
+				//AjaxData['ctl00$MainContent$CollapsiblePanelExtender1_ClientState'] = 'true';
 				
 				if (req.query.semester) {
 					AjaxData['ctl00$MainContent$ddlSem'] = req.query.semester;
@@ -64,7 +66,7 @@ module.exports = function (app, request, cheerio) {
 					AjaxData['ctl00$MainContent$ddlSem'] = req.body.semester;
 				}
 
-				AjaxData['ctl00$MainContent$ddlRollno'] = '';//req.query.rollno;
+				AjaxData['ctl00$MainContent$ddlRollno'] = rollNo;
 				
 				AjaxData['ctl00$cpeDesc_ClientState'] = 'false';
 				AjaxData['ctl00$ScriptManager1'] = 'ctl00$MainContent$UP1|ctl00$MainContent$ddlSem';

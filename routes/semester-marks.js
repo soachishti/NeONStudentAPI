@@ -1,6 +1,6 @@
 module.exports = function (app, request, cheerio) {
 	/**
-	 * @api {get} /marks Marks
+	 * @api {get} /semester-marks Marks
 	 * @apiName Student Marks
 	 * @apiGroup Info
 	 *
@@ -30,14 +30,21 @@ module.exports = function (app, request, cheerio) {
 				if (global.tools.LoginCheckOnRequest(response, res, error)) return;
 
 				BaseResponse = cheerio.load(html);
-
-				if (BaseResponse('#lblRollno').text() == "") {
+				var rollNo = BaseResponse('#lblRollno').text();
+				if (rollNo == "") {
 					res.statusCode = 406;
 					res.send({
 						error: global.Errors.NeONExpired
 					});
+					return;
 				}
+
+				//var year = 2000 + parseInt(rollNo.split("-")[0].match(/\d+$/)[0]);
+				//var rollNoNumberFormat = year + rollNo.split("-")[1];
 				
+				//console.log(rollNo);
+				//console.log(rollNoNumberFormat);
+
 				if (BaseResponse('#lblBatch').text() == req.body.semester) {
 					global.tools.ProcessAttendence(BaseResponse, res, req);		
 					return;
@@ -54,7 +61,7 @@ module.exports = function (app, request, cheerio) {
 				
 				AjaxData.__ASYNCPOST = 'true';
 
-				AjaxData['ctl00$MainContent$CollapsiblePanelExtender1_ClientState'] = 'true';
+				//AjaxData['ctl00$MainContent$CollapsiblePanelExtender1_ClientState'] = 'true';
 				
 				if (req.query.semester) {
 					AjaxData['ctl00$MainContent$ddlSem'] = req.query.semester;
@@ -63,7 +70,7 @@ module.exports = function (app, request, cheerio) {
 					AjaxData['ctl00$MainContent$ddlSem'] = req.body.semester;
 				}
 
-				AjaxData['ctl00$MainContent$ddlRollno'] = '';//req.query.rollno;
+				AjaxData['ctl00$MainContent$ddlRollno'] = rollNo;
 				
 				AjaxData['ctl00$cpeDesc_ClientState'] = 'false';
 				AjaxData['ctl00$ScriptManager1'] = 'ctl00$MainContent$UP1|ctl00$MainContent$ddlSem';
