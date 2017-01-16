@@ -18,7 +18,7 @@ module.exports = function (app, request, cheerio, db) {
 		var cookie = request.cookie(store.cookies);
 		var j = request.jar();
 		j.setCookie(cookie, global.setting.NeonURL);
-		var token = req.query.token;
+		var token = req.body.token;
 		request({
 			url		: global.setting.NeonURL + 'logout.aspx',
 			timeout	: global.setting.DefaultTimeout,

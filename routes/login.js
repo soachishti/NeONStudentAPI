@@ -27,7 +27,6 @@ module.exports = function(app, request, cheerio) {
 			token = req.query.token;
 		}
 
-
 		var cookie = request.cookie(store.cookies);
 		var j = request.jar();
 		j.setCookie(cookie, global.setting.NeonURL);
@@ -75,12 +74,13 @@ module.exports = function(app, request, cheerio) {
 			headers: global.setting.customHeader,
 			form: store.LoginData
 		}, function(error, response, body) {
+			console.log(Date() + " : Login request received");
 			if (!error && response.statusCode == 302) {
 				res.statusCode = 200;
 				store.LoggedIn = true;
 
 				// Delete password from server
-				store.LoginData = null;
+				
 				global.db.UpdateUser(token, store, function(result) {
                     if (!result) {
                         res.statusCode = 406;
@@ -89,13 +89,24 @@ module.exports = function(app, request, cheerio) {
                         });
                         return;
                     }
+
+
+                    console.log(Date() + ": User login successfull : " + token.substring(0, 7)) + " : " + store.LoginData.username + " : " + store.LoginData.ddlCampus;	
+	
+                    store.LoginData = null;
+                    
                     //console.log('changed ' + result.affectedRows + ' rows');
                     res.send({
                         result: true
                     });                    
                 });
 			} else {
-                console.log(error);
+
+				console.log(Date() + ": User login failed : " + token.substring(0, 7) + " : DB record deleting" );	
+
+				global.db.DeleteUser(token, function(result) {});
+
+                console.log(error);	
 				res.statusCode = 406;
 				if (typeof body === 'undefined')
                     res.send({

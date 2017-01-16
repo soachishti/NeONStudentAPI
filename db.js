@@ -74,7 +74,7 @@ connection.query("DELETE FROM UserData WHERE expire < ?" , [Math.round(new Date(
 module.exports = {
 	CreateUser: function(callback) {
 		var id = uuidV4();
-		console.log("Creating User " + id);	
+		console.log(Date() + ": Creating session : " + id.substring(0, 7));	
 	
 		var data  = {
 			key		: id,
@@ -83,19 +83,23 @@ module.exports = {
 		};
 		
 		var query = connection.query('INSERT INTO `UserData` SET ?', data, function(err, result) {
-            if (err) {
+            if (err != null) {
+                console.log("DeleteUser() : Error on next line");
                 console.log(err);
                 callback(null)
             }
-            callback(id);
+            else {
+                callback(id);
+            }
         });
 	},
 	DeleteUser: function (key, callback) {
-		///console.log("Delete User " + key);
-		var sql = "DELETE FROM `UserData` WHERE `key` = " + connection.escape(key);
-        //console.log(sql);
+		console.log(Date() + ": User logout : " + key.substring(0, 7)); 
+        var sql = "DELETE FROM `UserData` WHERE `key` = " + connection.escape(key);
+        
 		connection.query(sql, function (err, result) {
-            if (err) {
+            if (err != null) {
+                console.log("DeleteUser() : Error on next line");
                 console.log(err);
                 callback(null)
             }
@@ -106,7 +110,7 @@ module.exports = {
 		});		
 	},
 	UpdateUser: function (key, value, callback) {
-		console.log("Update User")
+        console.log(Date() + ": User data updated : " + key.substring(0, 7));   
 		var expireTime = Math.round(new Date().getTime() / 1000) + global.setting.DataStoreTimeout;
 		
 		var sql = "UPDATE UserData SET `value` = "+ connection.escape(encrypt(JSON.stringify(value))) +
@@ -114,12 +118,15 @@ module.exports = {
 				" WHERE `key` = " + connection.escape(key) + ";";
 	
 		connection.query(sql, function (err, result) {
-            if (err) {
+            if (err != null) {
+                console.log("UpdateUser() : Error on next line");
                 console.log(err);
                 callback(null)
             }
-            callback(result);
-		});
+            else {
+                callback(result);
+		    }
+        });
 	},
 	GetUser: function (key, callback) {
 		// Update expire date

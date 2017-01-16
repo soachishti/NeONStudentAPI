@@ -55,10 +55,10 @@ function cron_task() {
                         form: {token: user_key}
                     }, function(error, response, html) {
                         if (!error && response.statusCode == 200) {
-                            console.log(Date() + ": CRON[INFO]: " + user_key + " session updated.");
+                            console.log(Date() + ": CRON[INFO]: " + user_key.substring(0, 7) + " session updated.");
                         } else {
                             global.db.DeleteUser(user_key, function(result) {
-                                console.log(Date() + ": CRON[FAIL]: " + user_key + " delete from db");
+                                console.log(Date() + ": CRON[FAIL]: " + user_key.substring(0, 7) + " delete from db");
                             });
                         }
                     });

@@ -12,7 +12,7 @@ module.exports = function (req, res, request, callback, isLoginCheck){
 	}
 	
 	if (/^([0-9a-z\-]+)$/.test(token) == false) {
-        console.log(token);
+        console.log(Date() + ": Invalid Token : " + token);
 		res.statusCode = 406;
 		res.send({
 			error: global.Errors.InvalidToken
@@ -48,6 +48,13 @@ module.exports = function (req, res, request, callback, isLoginCheck){
         var pathname = url.parse(req.url).pathname;
         
         setTimeout (function() {
+        	console.log(path);
+        	if (path == "studentimage") {
+        		res.send({
+                	result: demo_data["student"]['result']['img']
+            	});	
+        		return;
+        	}
             res.send({
                 result: demo_data[path]['result']
             });
