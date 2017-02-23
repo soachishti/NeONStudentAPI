@@ -15,6 +15,11 @@
     "node-cron": "latest",
     "request": "^2.67.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:soachishti/NeONStudentAPI.git"
+  }
+  "license": "BSD-2-Clause",
   "description": "NeON Student for Mobile - API",
   "main": "app.js",
   "name": "NeONStudentMobileAPI",
