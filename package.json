@@ -18,7 +18,7 @@
   "description": "NeON Student for Mobile - API",
   "main": "app.js",
   "name": "NeONStudentMobileAPI",
-  "version": "0.0.1",
+  "version": "1.0.10",
   "scripts": {
     "start": "node app.js"
   }
