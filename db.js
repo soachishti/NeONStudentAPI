@@ -4,7 +4,7 @@ var crypto 		= require('crypto');
 var mysql       = require('mysql');
 var connection; 
 
-console.log(process.env);
+//console.log(process.env);
 
 var db_config   = {
 	host     : process.env.OPENSHIFT_MYSQL_DB_HOST || '127.0.0.1',
