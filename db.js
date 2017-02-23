@@ -3,6 +3,9 @@ var uuidV4      = require('uuid/v4');
 var crypto 		= require('crypto');
 var mysql       = require('mysql');
 var connection; 
+
+console.log(process.env);
+
 var db_config   = {
 	host     : process.env.OPENSHIFT_MYSQL_DB_HOST || '127.0.0.1',
 	user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'root',
