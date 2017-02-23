@@ -16,7 +16,7 @@
 * /keepalive    (GET)
 * /logout       (GET)
 
-Note: All method need token in url except /load eg /student?token=...
+Note: All method need token in url except /load eg /student?token=###
 
 ## License
 Copyright (c) 2016, soachishti
