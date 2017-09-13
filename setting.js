@@ -2,8 +2,8 @@ module.exports = {
 	DataStoreTimeout : 2*24*60*60, // 2 days
 	//DataStoreTimeout : 30*60, //30 min
 	token : null,
-	ip_address : process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1",
-	port : process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 7881,	
+	port : process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
+    ip_address : process.env.IP   || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',
 	NeonURL : 'http://nu.edu.pk/NeONStudent/',
 	DefaultTimeout : 120000, // 120 seconds
 	DefaultHeaders : {
