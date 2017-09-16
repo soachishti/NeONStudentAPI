@@ -1,10 +1,11 @@
 module.exports = {
-	DataStoreTimeout : 2*24*60*60, // 2 days
+	DataStoreTimeout : 1*24*60*60, // 2 days
 	//DataStoreTimeout : 30*60, //30 min
 	token : null,
+	ip_address : "https://neon-student.herokuapp.com/",
 	port : process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 7881,	
 	NeonURL : 'http://nu.edu.pk/NeONStudent/',
-	DefaultTimeout : 120000, // 120 seconds
+	DefaultTimeout : 30000, // 30 seconds (Heroku Limit)
 	DefaultHeaders : {
 		'Accept'			:'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
 		'Accept-Encoding'	:'gzip, deflate',

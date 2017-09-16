@@ -34,7 +34,7 @@ app.listen(global.setting.port, function() {
     console.log("Listening on: server_port " + global.setting.port)
 }); 
 
-/*
+
 function cron_task() {
     console.log('Will Run every 15 min ');
     var sql = "SELECT `key` FROM UserData;";
@@ -47,7 +47,7 @@ function cron_task() {
                 var key = data[i].key;                
                 
                 (function(user_key) {
-                    var url = "http://" + global.setting.ip_address + ":" + global.setting.port + "/keepalive";
+                    var url = "http://" + global.setting.ip_address + "/keepalive";
                     request.post({
                         url: url,
                         timeout: global.setting.DefaultTimeout,
@@ -69,7 +69,6 @@ function cron_task() {
     });
 }
 cron_task();
-*/
 
-//var task = cron.schedule('*/15 * * * *', cron_task, false);
-//task.start();
+var task = cron.schedule('*/15 * * * *', cron_task, false);
+task.start();
