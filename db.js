@@ -7,11 +7,11 @@ var connection;
 //console.log(process.env);
 
 var db_config   = {
-	host     : process.env.OPENSHIFT_MYSQL_DB_HOST || '127.0.0.1',
-	user     : process.env.OPENSHIFT_MYSQL_DB_USERNAME || 'root',
-	password : process.env.OPENSHIFT_MYSQL_DB_PASSWORD || 'root',
-	port     : process.env.OPENSHIFT_MYSQL_DB_PORT || 3306,
-	database : process.env.OPENSHIFT_APP_NAME || 'neonapi'
+	host     : process.env.CLEARDB_DATABASE_HOST || '127.0.0.1',
+	user     : process.env.CLEARDB_DATABASE_USERNAME || 'root',
+	password : process.env.CLEARDB_DATABASE_PASSWORD || 'root',
+	port     : process.env.CLEARDB_DATABASE_PORT || 3306,
+	database : process.env.CLEARDB_DATABASE_NAME || 'neonapi'
 };
 
 // Keep data base connection live.
