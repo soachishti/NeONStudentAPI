@@ -30,11 +30,11 @@ app.use(function(error, req, res, next) {
     });
 });
 
-app.listen(global.setting.port, global.setting.ip_address, function() {
-    console.log("Listening on " + global.setting.ip_address + ", server_port " + global.setting.port)
+app.listen(global.setting.port, function() {
+    console.log("Listening on: server_port " + global.setting.port)
 }); 
 
-
+/*
 function cron_task() {
     console.log('Will Run every 15 min ');
     var sql = "SELECT `key` FROM UserData;";
@@ -69,5 +69,7 @@ function cron_task() {
     });
 }
 cron_task();
-var task = cron.schedule('*/15 * * * *', cron_task, false);
-task.start();
+*/
+
+//var task = cron.schedule('*/15 * * * *', cron_task, false);
+//task.start();
